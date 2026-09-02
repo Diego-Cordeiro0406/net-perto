@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export function MainLayout({
   children,
@@ -16,6 +16,7 @@ export function MainLayout({
 
         <section className="flex w-full flex-1 flex-col">
           <header className="flex h-16 items-center gap-4 border-b border-border bg-card px-4">
+            <SidebarTrigger />
             <NavLink to="/" className="flex items-center gap-2">
               <div className="flex">
                 <h1 className="text-4xl font-extralight">Net</h1>

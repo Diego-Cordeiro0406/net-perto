@@ -36,3 +36,22 @@ export const providerSchema = z.object({
 });
 
 export type ProviderFormData = z.infer<typeof providerSchema>;
+
+export const providerCoverageSchema = z.object({
+  zip_code: z
+    .string()
+    .min(1, "Informe o CEP.")
+    .regex(/^\d{5}-?\d{3}$/, "Informe um CEP válido."),
+
+  street: z.string(),
+
+  neighborhood: z.string(),
+
+  status: z.string().min(1, "Selecione o status."),
+
+  source: z.string().min(1, "Informe a fonte."),
+
+  last_checked_at: z.string().optional(),
+});
+
+export type ProviderCoverageFormData = z.infer<typeof providerCoverageSchema>;

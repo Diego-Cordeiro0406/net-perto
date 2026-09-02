@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 
 import { useDeleteProvider, useProviders } from "@/hooks/useProviders";
+import { toast } from "@/components/ui/toast";
 
 export default function Providers() {
   const navigate = useNavigate();
@@ -27,6 +28,9 @@ export default function Providers() {
 
   async function handleDelete(id: string) {
     await deleteProvider.mutateAsync(id);
+    toast.add({
+      title: "Provedor exluido com sucesso!",
+    });
   }
 
   return (
@@ -40,7 +44,7 @@ export default function Providers() {
           </p>
         </div>
 
-        <Button onClick={() => navigate("/admin/providers/new")}>
+        <Button className="h-10" onClick={() => navigate("/admin/providers/new")}>
           <Plus />
           Novo provedor
         </Button>
@@ -107,6 +111,12 @@ export default function Providers() {
                           onClick={() => navigate(`/admin/providers/${provider.id}/edit`)}
                         >
                           Editar
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          onClick={() => navigate(`/admin/providers/${provider.id}/coverage`)}
+                        >
+                          Cobertura
                         </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => handleDelete(provider.id)}>

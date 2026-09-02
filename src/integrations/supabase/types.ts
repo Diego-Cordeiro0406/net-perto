@@ -75,9 +75,11 @@ export type Database = {
           created_at: string;
           id: string;
           last_checked_at: string | null;
+          neighborhood: string | null;
           provider_id: string;
           source: string;
           status: string;
+          street: string | null;
           updated_at: string;
           zip_code: string;
         };
@@ -85,9 +87,11 @@ export type Database = {
           created_at?: string;
           id?: string;
           last_checked_at?: string | null;
+          neighborhood?: string | null;
           provider_id: string;
           source: string;
           status: string;
+          street?: string | null;
           updated_at?: string;
           zip_code: string;
         };
@@ -95,9 +99,11 @@ export type Database = {
           created_at?: string;
           id?: string;
           last_checked_at?: string | null;
+          neighborhood?: string | null;
           provider_id?: string;
           source?: string;
           status?: string;
+          street?: string | null;
           updated_at?: string;
           zip_code?: string;
         };
@@ -116,6 +122,7 @@ export type Database = {
           created_at: string;
           description: string | null;
           id: string;
+          logo_url: string | null;
           name: string;
           updated_at: string;
           website: string;
@@ -124,6 +131,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          logo_url?: string | null;
           name: string;
           updated_at?: string;
           website: string;
@@ -132,6 +140,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          logo_url?: string | null;
           name?: string;
           updated_at?: string;
           website?: string;

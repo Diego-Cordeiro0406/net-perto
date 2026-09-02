@@ -1,9 +1,4 @@
-import {
-  Building2,
-  LayoutDashboard,
-  LogOut,
-  Wifi,
-} from "lucide-react";
+import { Building2, LayoutDashboard, LogOut, Settings, Shield } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,11 +13,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { Badge } from "./ui/badge";
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { state } = useSidebar();
 
   const handleSignOut = async () => {
     try {
@@ -36,32 +34,29 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b">
-        <NavLink
-          to="/admin"
-          className="flex items-center gap-2 px-2 py-3"
-        >
-          <div className="flex">
-            <span className="text-2xl font-extralight">
-              Net
-            </span>
+      <SidebarHeader className="h-16 border-b">
+        {state === "collapsed" ? (
+          <NavLink to="/admin" className="flex items-center gap-2 px-1 py-3">
+            <div className="flex">
+              <span className="text-xl font-extralight">N</span>
 
-            <span className="text-2xl font-extrabold">
-              Perto
-            </span>
-          </div>
+              <span className="text-xl font-extrabold">P</span>
+            </div>
+          </NavLink>
+        ) : (
+          <NavLink to="/admin" className="flex items-center gap-2 px-2 py-3">
+            <div className="flex">
+              <span className="text-2xl font-extralight">Net</span>
 
-          <span className="text-xs text-muted-foreground">
-            Admin
-          </span>
-        </NavLink>
+              <span className="text-2xl font-extrabold">Perto</span>
+            </div>
+          </NavLink>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>
-            Administração
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Administração</SidebarGroupLabel>
 
           <SidebarMenu>
             <SidebarMenuItem>
@@ -91,22 +86,24 @@ export function AppSidebar() {
                   />
                 }
               >
-                  <Building2 />
-                  <span>Provedores</span>
+                <Building2 />
+                <span>Provedores</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton render={
+              <SidebarMenuButton
+                render={
                   <NavLink
                     to="/admin/coverage"
                     className={({ isActive }) =>
                       isActive ? "bg-accent text-accent-foreground" : ""
                     }
                   />
-                }>
-                  <Wifi />
-                  <span>Cobertura</span>
+                }
+              >
+                <Settings />
+                <span>Configurações</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -116,6 +113,10 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
+            <Badge>
+              <Shield />
+              <span className="text-xs text-muted-white">Admin</span>
+            </Badge>
             <SidebarMenuButton onClick={handleSignOut}>
               <LogOut />
               <span>Sair</span>

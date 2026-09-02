@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { Toaster } from "./components/ui/toast.tsx";
 
 const queryClient = new QueryClient();
 
@@ -12,6 +13,7 @@ createRoot(document.getElementById("root")!).render(
     <AuthProvider>
       <StrictMode>
         <App />
+        <Toaster />
       </StrictMode>
     </AuthProvider>
   </QueryClientProvider>

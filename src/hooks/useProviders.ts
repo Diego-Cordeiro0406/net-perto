@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { toast } from "@/components/ui/toast";
 
 type Provider = Database["public"]["Tables"]["providers"]["Row"];
 
@@ -70,9 +71,13 @@ export function useCreateProvider() {
       return data;
     },
 
-    onSuccess: () => {
+    onSuccess: (provider) => {
       queryClient.invalidateQueries({
         queryKey: ["providers"],
+      });
+      toast.add({
+        title: "Provedor adicionado com sucesso!",
+        description: `O provedor ${provider.name} foi adicionado com sucesso!`,
       });
     },
   });
@@ -107,6 +112,10 @@ export function useUpdateProvider() {
 
       queryClient.invalidateQueries({
         queryKey: ["provider", provider.id],
+      });
+      toast.add({
+        title: "Provedor atualizado com sucesso!",
+        description: `O provedor ${provider.name} foi atualizado com sucesso!`,
       });
     },
   });
