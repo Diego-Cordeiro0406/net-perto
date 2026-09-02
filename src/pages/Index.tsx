@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
 
-
 export default function Index() {
   const {
     register,
@@ -24,7 +23,7 @@ export default function Index() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <section className="flex min-h-full items-center justify-center px-4">
       <section className="w-full max-w-3xl text-center">
         <div className="space-y-5">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -35,10 +34,7 @@ export default function Index() {
             Descubra provedores e planos disponíveis em Petrolina.
           </p>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mx-auto w-full max-w-xl pt-4"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-xl pt-4">
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative flex-1">
                 <MapPin
@@ -57,24 +53,17 @@ export default function Index() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 px-8"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
                 {isSubmitting ? "Buscando..." : "Buscar"}
               </Button>
             </div>
 
             {errors.zipCode && (
-              <p className="mt-2 text-left text-sm text-destructive">
-                {errors.zipCode.message}
-              </p>
+              <p className="mt-2 text-left text-sm text-destructive">{errors.zipCode.message}</p>
             )}
           </form>
         </div>
       </section>
-    </main>
+    </section>
   );
 }

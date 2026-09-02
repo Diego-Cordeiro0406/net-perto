@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toast"
+import { Toaster } from "@/components/ui/toast";
 
 type CardProps = {
   children: React.ReactNode;
@@ -12,5 +12,5 @@ export default function RootLayout({ children }: CardProps) {
         <Toaster />
       </body>
     </html>
-  )
+  );
 }

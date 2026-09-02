@@ -1,22 +1,33 @@
-export function MainLayout({ children }: { children: React.ReactNode }) {
+import { NavLink } from "react-router-dom";
+
+import { SidebarProvider } from "@/components/ui/sidebar";
+
+export function MainLayout({
+  children,
+  sidebar,
+}: {
+  children: React.ReactNode;
+  sidebar?: React.ReactNode;
+}) {
   return (
-      <section className="min-h-screen flex w-full">
+    <SidebarProvider>
+      <section className="flex min-h-screen w-full">
+        {sidebar}
 
-        <main className="w-full flex-1 flex flex-col">
-          <header className="h-16 border-b border-border bg-card flex items-center px-4 gap-4">
+        <section className="flex w-full flex-1 flex-col">
+          <header className="flex h-16 items-center gap-4 border-b border-border bg-card px-4">
+            <NavLink to="/" className="flex items-center gap-2">
+              <div className="flex">
+                <h1 className="text-4xl font-extralight">Net</h1>
 
-            {/* <NavLink to="/" className="flex items-center gap-2">
-              <img src="/images/logo-full.png" alt="Revezah" className="h-9 object-contain" />
-            </NavLink> */}
+                <h1 className="text-4xl font-extrabold">Perto</h1>
+              </div>
+            </NavLink>
           </header>
 
-
-          <main className="flex-1 p-6 pb-40 sm:pb-32 bg-background">
-            {children}
-          </main>
-
-          {/* <Footer /> */}
-        </main>
+          <main className="flex-1 bg-background p-6">{children}</main>
+        </section>
       </section>
+    </SidebarProvider>
   );
 }

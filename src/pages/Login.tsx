@@ -35,6 +35,7 @@ export function Login() {
       }
 
       const { error } = await signIn(email, password);
+
       if (error) {
         toast.add({
           title: "Erro ao fazer login",
@@ -44,7 +45,7 @@ export function Login() {
         });
       } else {
         toast.add({ title: "Login realizado!", description: "Bem-vindo(a) de volta" });
-        navigate("/", {
+        navigate("/admin", {
           replace: true,
         });
       }
@@ -71,7 +72,7 @@ export function Login() {
         <ArrowLeft className="h-4 w-4" />
         Voltar
       </button>
-      <Card className="w-full max-w-xl">
+      <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
           <NavLink to="/" className="flex items-center justify-center mb-2">
             {/* <img
@@ -79,48 +80,55 @@ export function Login() {
               alt="Revezah - Babás e Cuidadoras em Porto Alegre"
               className="h-14 object-contain"
             /> */}
+            <h1 className="font-extrabold text-5xl">NetPerto</h1>
           </NavLink>
           <CardDescription>Descubra provedores e planos disponíveis em Petrolina.</CardDescription>
         </CardHeader>
         <CardContent>
-    <form onSubmit={handleLogin} className="space-y-4">
-      <div className="space-y-2">
-        <Label>Email</Label>
-        <Input
-          type="email"
-          placeholder="exemplo@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                placeholder="exemplo@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-      <div className="relative space-y-2">
-        <Label>Senha</Label>
-        <Input
-          type={showPassword ? "text" : "password"}
-          value={password}
-          data-testid="password-input"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="button"
-          data-testid="show-password-button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-10 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-        >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
-      </div>
+            <div className="relative space-y-2">
+              <Label>Senha</Label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                data-testid="password-input"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                data-testid="show-password-button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-10 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
 
-      <div className="flex flex-col gap-2">
-        <Button data-testid="button-submit" type="submit" className="w-full" disabled={loading}>
-          {loading ? "Entrando..." : "Entrar"}
-        </Button>
-      </div>
-    </form>
-    </CardContent>
+            <div className="flex flex-col gap-2">
+              <Button
+                size={"lg"}
+                data-testid="button-submit"
+                type="submit"
+                className="w-full"
+                disabled={loading}
+              >
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
       </Card>
     </div>
   );

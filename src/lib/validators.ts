@@ -13,13 +13,26 @@ export const searchSchema = z.object({
 export type SearchFormData = z.infer<typeof searchSchema>;
 
 export const loginSchema = z.object({
-  email: z
-    .email("Digite um e-mail válido")
-    .min(1, "Digite seu e-mail"),
+  email: z.email("Digite um e-mail válido").min(1, "Digite seu e-mail"),
 
-  password: z
-    .string()
-    .min(1, "Digite sua senha"),
+  password: z.string().min(1, "Digite sua senha"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+
+export const providerSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Digite o nome do provedor")
+    .max(100, "O nome deve ter no máximo 100 caracteres"),
+
+  website: z.url("Digite uma URL válida").min(1, "Digite o site do provedor"),
+
+  description: z
+    .string()
+    .max(500, "A descrição deve ter no máximo 500 caracteres")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ProviderFormData = z.infer<typeof providerSchema>;

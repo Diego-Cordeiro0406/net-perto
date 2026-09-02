@@ -1,14 +1,7 @@
-// src/contexts/AuthProvider.tsx
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-
-import type { Session, User, AuthError } from "@supabase/supabase-js";
+import type { AuthError, Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,13 +13,14 @@ interface AuthContextData {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
+
   signIn: (email: string, password: string) => Promise<SignInResult>;
+
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextData | undefined>(
-  undefined,
-);
+const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -34,8 +28,45 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+
   const [session, setSession] = useState<Session | null>(null);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const [loading, setLoading] = useState(true);
+
+  const checkIsAdmin = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erro ao verificar permissões:", error);
+
+      return false;
+    }
+
+    return Boolean(data);
+  };
+
+  const updateAuthState = async (currentSession: Session | null) => {
+    const currentUser = currentSession?.user ?? null;
+
+    setSession(currentSession);
+    setUser(currentUser);
+
+    if (!currentUser) {
+      setIsAdmin(false);
+
+      return;
+    }
+
+    const admin = await checkIsAdmin(currentUser.id);
+
+    setIsAdmin(admin);
+  };
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -45,8 +76,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.error("Erro ao recuperar sessão:", error);
       }
 
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
+      await updateAuthState(data.session);
+
       setLoading(false);
     };
 
@@ -54,16 +85,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      },
-    );
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      await updateAuthState(session);
+
+      setLoading(false);
+    });
 
     return () => {
       subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signIn = async (email: string, password: string): Promise<SignInResult> => {
@@ -72,7 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       password,
     });
 
-     return { error };
+    return { error };
   };
 
   const signOut = async () => {
@@ -89,6 +120,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         user,
         session,
         loading,
+        isAdmin,
         signIn,
         signOut,
       }}
@@ -98,14 +130,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error(
-      "useAuth deve ser utilizado dentro de um AuthProvider",
-    );
+    throw new Error("useAuth deve ser utilizado dentro de um AuthProvider");
   }
 
   return context;
