@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Providers from "./pages/Providers";
 import ProviderForm from "./pages/ProviderForm";
 import ProviderCoverage from "./pages/ProviderCoverage";
+import AdminPlans from "./pages/AdminPlans";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/admin/providers/new" element={<ProviderForm />} />
             <Route path="/admin/providers/:id/edit" element={<ProviderForm />} />
             <Route path="/admin/providers/:id/coverage" element={<ProviderCoverage />} />
+            <Route path="/admin/providers/:providerId/plans" element={<AdminPlans />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

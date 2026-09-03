@@ -118,6 +118,11 @@ export default function Providers() {
                         >
                           Cobertura
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate(`/admin/providers/${provider.id}/plans`)}
+                        >
+                          Planos
+                        </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => handleDelete(provider.id)}>
                           Excluir

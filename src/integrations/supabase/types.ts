@@ -25,40 +25,64 @@ export type Database = {
       };
       plans: {
         Row: {
+          benefits: Json;
+          contract_months: number | null;
           created_at: string;
+          description: string | null;
           download_speed: number;
           id: string;
+          installation_fee: number | null;
+          is_active: boolean;
           last_checked_at: string | null;
           name: string;
           price: number;
+          promotional_months: number | null;
+          promotional_price: number | null;
           provider_id: string;
           source_url: string;
           updated_at: string;
           upload_speed: number;
+          wifi_type: string | null;
         };
         Insert: {
+          benefits?: Json;
+          contract_months?: number | null;
           created_at?: string;
+          description?: string | null;
           download_speed: number;
           id?: string;
+          installation_fee?: number | null;
+          is_active?: boolean;
           last_checked_at?: string | null;
           name: string;
           price: number;
+          promotional_months?: number | null;
+          promotional_price?: number | null;
           provider_id: string;
           source_url: string;
           updated_at?: string;
           upload_speed: number;
+          wifi_type?: string | null;
         };
         Update: {
+          benefits?: Json;
+          contract_months?: number | null;
           created_at?: string;
+          description?: string | null;
           download_speed?: number;
           id?: string;
+          installation_fee?: number | null;
+          is_active?: boolean;
           last_checked_at?: string | null;
           name?: string;
           price?: number;
+          promotional_months?: number | null;
+          promotional_price?: number | null;
           provider_id?: string;
           source_url?: string;
           updated_at?: string;
           upload_speed?: number;
+          wifi_type?: string | null;
         };
         Relationships: [
           {
