@@ -1,34 +1,46 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
+import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSideBar";
 
-export function MainLayout({
-  children,
-  sidebar,
-}: {
-  children: React.ReactNode;
-  sidebar?: React.ReactNode;
-}) {
-  return (
-    <SidebarProvider>
-      <section className="flex min-h-screen w-full">
-        {sidebar}
+export function MainLayout() {
+  const { user, loading } = useAuth();
 
-        <section className="flex w-full flex-1 flex-col">
-          <header className="flex h-16 items-center gap-4 border-b border-border bg-card px-4">
-            <SidebarTrigger />
-            <NavLink to="/" className="flex items-center gap-2">
-              <div className="flex">
-                <h1 className="text-4xl font-extralight">Net</h1>
+  if (loading) {
+    return null;
+  }
 
-                <h1 className="text-4xl font-extrabold">Perto</h1>
-              </div>
+  const content = (
+    <section className="flex min-h-screen w-full">
+      {user && <AppSidebar />}
+
+      <section className="flex w-full flex-1 flex-col">
+        <header
+          className={`flex ${!user && "justify-between"} h-16 items-center gap-4 border-b border-border bg-card px-4`}
+        >
+          {user && <SidebarTrigger />}
+
+          <NavLink to="/" className="flex items-center gap-2">
+            <img
+              src="/images/logo-horizontal.png"
+              alt="NetPerto"
+              className="h-9 w-auto object-contain"
+            />
+          </NavLink>
+          {!user && (
+            <NavLink className="text-white" to="admin/login">
+              aqui
             </NavLink>
-          </header>
+          )}
+        </header>
 
-          <main className="flex-1 bg-background p-6">{children}</main>
-        </section>
+        <main className="flex-1 bg-background p-6">
+          <Outlet />
+        </main>
       </section>
-    </SidebarProvider>
+    </section>
   );
+
+  return user ? <SidebarProvider>{content}</SidebarProvider> : content;
 }

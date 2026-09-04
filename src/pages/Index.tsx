@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
+import { useNavigate } from "react-router-dom";
+import { PageSEO } from "@/components/PageSEO";
 
 export default function Index() {
   const {
@@ -18,12 +20,21 @@ export default function Index() {
     },
   });
 
+  const navigate = useNavigate();
+
   const onSubmit = (data: SearchFormData) => {
-    console.log("CEP:", data.zipCode);
+    const cleanCep = data.zipCode.replace(/\D/g, "");
+
+    navigate(`/search?cep=${cleanCep}`);
   };
 
   return (
     <section className="flex min-h-full items-center justify-center px-4">
+      <PageSEO
+        title="Encontre internet em Petrolina"
+        description="Encontre e compare provedores e planos de internet disponíveis em Petrolina, Pernambuco."
+        canonical="/"
+      />
       <section className="w-full max-w-3xl text-center">
         <div className="space-y-5">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">

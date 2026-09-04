@@ -75,12 +75,11 @@ export function Login() {
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
           <NavLink to="/" className="flex items-center justify-center mb-2">
-            {/* <img
-              src="/images/logo-full.png"
-              alt="Revezah - Babás e Cuidadoras em Porto Alegre"
-              className="h-14 object-contain"
-            /> */}
-            <h1 className="font-extrabold text-5xl">NetPerto</h1>
+            <img
+              src="/images/logo-horizontal.png"
+              alt="NetPerto"
+              className="h-14 w-auto object-contain"
+            />
           </NavLink>
           <CardDescription>Descubra provedores e planos disponíveis em Petrolina.</CardDescription>
         </CardHeader>
