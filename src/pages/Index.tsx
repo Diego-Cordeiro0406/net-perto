@@ -1,31 +1,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
-import { useNavigate } from "react-router-dom";
 import { PageSEO } from "@/components/PageSEO";
+import { NeighborhoodAutocomplete } from "@/components/NeighborhoodAutocomplete";
 
 export default function Index() {
+  const navigate = useNavigate();
+
   const {
-    register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SearchFormData>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      zipCode: "",
+      neighborhoodId: "",
     },
   });
 
-  const navigate = useNavigate();
+  const neighborhoodId = useWatch({
+    control,
+    name: "neighborhoodId",
+  });
 
   const onSubmit = (data: SearchFormData) => {
-    const cleanCep = data.zipCode.replace(/\D/g, "");
-
-    navigate(`/search?cep=${cleanCep}`);
+    navigate(`/search?neighborhood=${data.neighborhoodId}`);
   };
 
   return (
@@ -35,6 +38,7 @@ export default function Index() {
         description="Encontre e compare provedores e planos de internet disponíveis em Petrolina, Pernambuco."
         canonical="/"
       />
+
       <section className="w-full max-w-3xl text-center">
         <div className="space-y-5">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -42,25 +46,21 @@ export default function Index() {
           </h1>
 
           <p className="text-lg text-muted-foreground sm:text-xl">
-            Descubra provedores e planos disponíveis em Petrolina.
+            Descubra provedores e planos disponíveis no seu bairro.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-xl pt-4">
             <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <MapPin
-                  className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground"
-                  aria-hidden="true"
-                />
-
-                <Input
-                  {...register("zipCode")}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Digite seu CEP"
-                  className="h-12 pl-10 text-base"
-                  maxLength={9}
-                  aria-invalid={!!errors.zipCode}
+              <div className="flex-1">
+                <NeighborhoodAutocomplete
+                  value={neighborhoodId}
+                  onValueChange={(value) => {
+                    setValue("neighborhoodId", value, {
+                      shouldValidate: true,
+                    });
+                  }}
+                  disabled={isSubmitting}
+                  placeholder="Digite seu bairro"
                 />
               </div>
 
@@ -69,8 +69,10 @@ export default function Index() {
               </Button>
             </div>
 
-            {errors.zipCode && (
-              <p className="mt-2 text-left text-sm text-destructive">{errors.zipCode.message}</p>
+            {errors.neighborhoodId && (
+              <p className="mt-2 text-left text-sm text-destructive">
+                {errors.neighborhoodId.message}
+              </p>
             )}
           </form>
         </div>

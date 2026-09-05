@@ -19,17 +19,9 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
       <CardHeader className="space-y-4">
         {/* Provider */}
         <div className="flex items-center gap-3">
-          {plan.provider?.logo_url ? (
-            <img
-              src={plan.provider.logo_url}
-              alt={plan.provider.name}
-              className="h-10 w-10 rounded-md object-contain"
-            />
-          ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
-              <Wifi className="h-5 w-5 text-muted-foreground" />
-            </div>
-          )}
+          <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
+            <Wifi className="h-5 w-5 text-muted-foreground" />
+          </div>
 
           <div className="min-w-0">
             <p className="truncate font-medium">{plan.provider?.name ?? "Provedor"}</p>

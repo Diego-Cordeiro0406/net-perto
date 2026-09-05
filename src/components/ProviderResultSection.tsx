@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PlanResultCard } from "@/components/PlanResultCard";
 import type { ProviderGroup } from "@/types/types";
+import { getPublicUrl } from "@/lib/storage";
 
 export function ProviderResultSection({ provider, plans }: ProviderGroup) {
   return (
@@ -15,7 +16,7 @@ export function ProviderResultSection({ provider, plans }: ProviderGroup) {
             <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
               {provider.logo_url ? (
                 <img
-                  src={provider.logo_url}
+                  src={getPublicUrl("providers-logos", provider.logo_url)}
                   alt={`Logo ${provider.name}`}
                   className="size-full object-contain"
                 />

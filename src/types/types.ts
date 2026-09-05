@@ -61,3 +61,5 @@ export interface PageSEOProps {
   type?: string;
   noindex?: boolean;
 }
+
+// PROVIDERS COVERAGE E NEIGHBORHOODS TYPES

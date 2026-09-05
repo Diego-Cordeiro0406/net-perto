@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ALLOWED_BUCKETS = ["blog-images", "documents", "avatars", "banners"];
+const ALLOWED_BUCKETS = ["providers-logos"];
 const MAX_FILE_SIZE = 6 * 1024 * 1024; // 6MB
 
 Deno.serve(async (req) => {
@@ -24,12 +24,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    const publishableKeys = JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS")!);
+
+    const supabaseKey = Object.values(publishableKeys)[0] as string;
+
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
     const token = authHeader.replace("Bearer ", "");
     const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
@@ -108,7 +110,7 @@ Deno.serve(async (req) => {
     await uploadResponse.text();
 
     // For public buckets, return public URL; for private, return the path
-    const isPublic = ["blog-images", "avatars", "banners"].includes(bucket);
+    const isPublic = ["providers-logos"].includes(bucket);
     const resultUrl = isPublic ? `${publicUrl}/${r2Key}` : null;
 
     return new Response(

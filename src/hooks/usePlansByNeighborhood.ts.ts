@@ -17,11 +17,9 @@ function parseBenefits(benefits: unknown): PlanBenefit[] {
   );
 }
 
-export function usePlansByCep(cep?: string) {
-  const cleanCep = cep?.replace(/\D/g, "") ?? "";
-
+export function usePlansByNeighborhood(neighborhoodId?: string) {
   return useQuery({
-    queryKey: ["plans-by-cep", cleanCep],
+    queryKey: ["plans-by-neighborhood", neighborhoodId],
 
     queryFn: async () => {
       const { data: coverages, error: coverageError } = await supabase
@@ -39,7 +37,7 @@ export function usePlansByCep(cep?: string) {
             )
           `
         )
-        .eq("zip_code", cleanCep)
+        .eq("neighborhood_id", neighborhoodId!)
         .eq("status", "available");
 
       if (coverageError) {
@@ -69,15 +67,17 @@ export function usePlansByCep(cep?: string) {
         coverages.map((coverage) => [coverage.provider_id, coverage.providers])
       );
 
-      return plans?.map((plan) => ({
-        ...plan,
+      return (
+        plans?.map((plan) => ({
+          ...plan,
 
-        benefits: parseBenefits(plan.benefits),
+          benefits: parseBenefits(plan.benefits),
 
-        provider: providersMap.get(plan.provider_id) ?? null,
-      }));
+          provider: providersMap.get(plan.provider_id) ?? null,
+        })) ?? []
+      );
     },
 
-    enabled: cleanCep.length === 8,
+    enabled: Boolean(neighborhoodId),
   });
 }

@@ -1,13 +1,7 @@
 import { z } from "zod";
 
 export const searchSchema = z.object({
-  zipCode: z
-    .string()
-    .min(1, "Digite seu CEP")
-    .transform((value) => value.replace(/\D/g, ""))
-    .refine((value) => value.length === 8, {
-      message: "Digite um CEP válido",
-    }),
+  neighborhoodId: z.string().min(1, "Selecione um bairro."),
 });
 
 export type SearchFormData = z.infer<typeof searchSchema>;
@@ -38,14 +32,7 @@ export const providerSchema = z.object({
 export type ProviderFormData = z.infer<typeof providerSchema>;
 
 export const providerCoverageSchema = z.object({
-  zip_code: z
-    .string()
-    .min(1, "Informe o CEP.")
-    .regex(/^\d{5}-?\d{3}$/, "Informe um CEP válido."),
-
-  street: z.string(),
-
-  neighborhood: z.string(),
+  neighborhood_id: z.string().min(1, "Selecione um bairro."),
 
   status: z.string().min(1, "Selecione o status."),
 

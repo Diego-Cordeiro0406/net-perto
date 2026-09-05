@@ -3,16 +3,17 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { ProviderResultSection } from "@/components/ProviderResultSection";
-import { usePlansByCep } from "@/hooks/usePlansByCep";
-import { formatZipCode } from "@/lib/formatters";
+import { usePlansByNeighborhood } from "@/hooks/usePlansByNeighborhood.ts";
 import type { ProviderGroup } from "@/types/types";
+import { useSingleNeighborhood } from "@/hooks/useNeighborhoods";
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
 
-  const cep = searchParams.get("cep") ?? "";
+  const neighborhoodParam = searchParams.get("neighborhood") ?? "";
+  const { data: neighborhood } = useSingleNeighborhood(neighborhoodParam);
 
-  const { data: plans, isLoading, error } = usePlansByCep(cep);
+  const { data: plans, isLoading, error } = usePlansByNeighborhood(neighborhood?.id);
 
   /**
    * Agrupa os planos por provedor.
@@ -56,7 +57,7 @@ export default function SearchResults() {
             </h1>
 
             <p className="mt-2 text-muted-foreground">
-              Confira os planos disponíveis para o CEP <strong>{formatZipCode(cep)}</strong>.
+              Confira os planos disponíveis para o Bairro <strong>{neighborhood?.name}</strong>.
             </p>
           </div>
         </div>
@@ -115,10 +116,10 @@ export default function SearchResults() {
             <h2 className="text-lg font-semibold">Nenhum plano encontrado</h2>
 
             <p className="mt-2 text-sm text-muted-foreground">
-              Não encontramos planos de internet disponíveis para este CEP.
+              Não encontramos planos de internet disponíveis para este Bairro.
             </p>
 
-            <Button className="mt-6" render={<Link to="/" />}>
+            <Button nativeButton={false} className="mt-6" render={<Link to="/" />}>
               Fazer nova busca
             </Button>
           </div>

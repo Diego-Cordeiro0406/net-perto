@@ -32,6 +32,7 @@ export async function uploadFile(
  */
 export function getPublicUrl(bucket: StorageBucket, path: string): string {
   const R2_PUBLIC_URL = import.meta.env.VITE_R2_PUBLIC_URL;
+
   if (R2_PUBLIC_URL) {
     return `${R2_PUBLIC_URL}/${bucket}/${path}`;
   }

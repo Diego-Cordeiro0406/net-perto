@@ -11,14 +11,10 @@ import {
 
 import { useDeleteProviderCoverage } from "@/hooks/useProviderCoverage";
 import { toast } from "@/components/ui/toast";
-
-import type { Database } from "@/integrations/supabase/types";
-import { formatZipCode } from "@/lib/formatters";
-
-type ProviderCoverage = Database["public"]["Tables"]["provider_coverage"]["Row"];
+import type { ProviderCoverageWithNeighborhood } from "@/hooks/useNeighborhoods";
 
 type DeleteProviderCoverageDialogProps = {
-  coverage: ProviderCoverage | null;
+  coverage: ProviderCoverageWithNeighborhood | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -41,7 +37,7 @@ export function DeleteProviderCoverageDialog({
 
       toast.add({
         title: "Cobertura excluída",
-        description: `O CEP ${formatZipCode(coverage.zip_code)} foi removido com sucesso.`,
+        description: `A cobertura do bairro ${coverage.neighborhoods?.name ?? "-"} foi removida com sucesso.`,
         type: "success",
       });
 
@@ -65,8 +61,8 @@ export function DeleteProviderCoverageDialog({
           <AlertDialogTitle>Excluir cobertura?</AlertDialogTitle>
 
           <AlertDialogDescription>
-            Você tem certeza que deseja remover a cobertura do CEP{" "}
-            <strong>{coverage?.zip_code ? formatZipCode(coverage.zip_code) : "-"}</strong>?
+            Você tem certeza que deseja remover a cobertura do bairro{" "}
+            <strong>{coverage?.neighborhoods?.name ?? "-"}</strong>?
             <br />
             <br />
             Essa ação não poderá ser desfeita.

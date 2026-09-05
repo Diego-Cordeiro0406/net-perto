@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,14 +10,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { providerSchema, type ProviderFormData } from "@/lib/validators";
 
 import { useCreateProvider, useProvider, useUpdateProvider } from "@/hooks/useProviders";
+import { getPublicUrl } from "@/lib/storage";
+import { toast } from "@/components/ui/toast";
+import { ProviderPhotoUpload } from "@/components/ProviderPhotoUpload";
+import { Camera } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { saveProviderLogo } from "@/services/providerLogo";
 
 export default function ProviderForm() {
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newLogo, setNewLogo] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const isEditing = Boolean(id);
 
   const { data: provider, isLoading: isLoadingProvider, error: providerError } = useProvider(id);
+  const currentLogo = provider?.logo_url ?? null;
 
   const createProvider = useCreateProvider();
   const updateProvider = useUpdateProvider();
@@ -45,6 +54,38 @@ export default function ProviderForm() {
       });
     }
   }, [provider, reset]);
+
+  async function handleSaveAvatar() {
+    if (!newLogo || !provider) return;
+
+    try {
+      setIsSaving(true);
+
+      await saveProviderLogo({
+        providerId: provider.id,
+        newLogo,
+        currentLogo: provider.logo_url,
+      });
+
+      setNewLogo(null);
+      setIsModalOpen(false);
+
+      toast.add({
+        title: "Logo atualizada!",
+        description: "A logo do provedor foi atualizada com sucesso.",
+      });
+    } catch (error) {
+      console.error(error);
+
+      toast.add({
+        title: "Erro ao atualizar logo",
+        description: "Não foi possível atualizar a logo do provedor.",
+        type: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   const onSubmit = async (data: ProviderFormData) => {
     try {
@@ -125,6 +166,56 @@ export default function ProviderForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <section className="flex items-center justify-center relative group">
+          <Avatar className="h-28 w-28 border-4 border-background shadow-xl">
+            <AvatarImage
+              src={
+                provider?.logo_url ? getPublicUrl("providers-logos", provider.logo_url) : undefined
+              }
+            />
+            <AvatarFallback className="text-2xl bg-linear-to-br from-purple-500 to-pink-500 text-white">
+              P
+            </AvatarFallback>
+          </Avatar>
+          <label
+            htmlFor="logo-upload"
+            className="absolute bottom-0 right-72 h-8 w-8 rounded-full shadow-lg transition-opacity cursor-pointer"
+          >
+            <Button
+              id="logo-upload"
+              size="icon"
+              onClick={() => setIsModalOpen(true)}
+              variant="secondary"
+              className="h-8 w-8 rounded-full"
+            >
+              <span>
+                <Camera className="h-4 w-4" />
+              </span>
+            </Button>
+          </label>
+        </section>
+        {isModalOpen && (
+          <section className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg w-full max-w-md space-y-4">
+              <h2 className="text-lg font-semibold">Atualizar foto</h2>
+
+              <ProviderPhotoUpload
+                value={currentLogo && getPublicUrl("providers-logos", currentLogo)}
+                onChange={setNewLogo}
+              />
+
+              <div className="flex gap-2">
+                <Button className="h-10" onClick={handleSaveAvatar} disabled={!newLogo || isSaving}>
+                  {isSaving ? "Salvando..." : "Salvar"}
+                </Button>
+
+                <Button className="h-10" variant="outline" onClick={() => setIsModalOpen(false)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
             Nome
@@ -169,6 +260,7 @@ export default function ProviderForm() {
 
         <div className="flex justify-end gap-2">
           <Button
+            className="h-10"
             type="button"
             variant="outline"
             onClick={() => navigate("/admin/providers")}
@@ -177,7 +269,7 @@ export default function ProviderForm() {
             Cancelar
           </Button>
 
-          <Button type="submit" disabled={isSubmitting}>
+          <Button className="h-10" type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Salvando..." : isEditing ? "Salvar alterações" : "Salvar provedor"}
           </Button>
         </div>
