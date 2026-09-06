@@ -19,8 +19,8 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
       <CardHeader className="space-y-4">
         {/* Provider */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
-            <Wifi className="h-5 w-5 text-muted-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-connectivity/10">
+            <Wifi className="h-5 w-5 text-connectivity" />
           </div>
 
           <div className="min-w-0">
@@ -43,9 +43,9 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
       <CardContent className="flex-1 space-y-6">
         {/* Speed */}
         <div className="grid lg:grid-cols-2 gap-3 grid-cols-1">
-          <div className="rounded-lg border p-3">
+          <div className="rounded-lg border border-connectivity/15 bg-connectivity/5 p-3">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <ArrowDown className="h-4 w-4" />
+              <ArrowDown className="h-4 w-4 text-connectivity" />
 
               <span className="text-xs">Download</span>
             </div>
@@ -53,10 +53,10 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
             <p className="mt-2 text-lg font-semibold">{plan.download_speed} Mbps</p>
           </div>
 
-          <div className="rounded-lg border p-3">
+          <div className="rounded-lg border border-connectivity/15 bg-connectivity/5 p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <ArrowUp className="h-4 w-4" />
+                <ArrowUp className="h-4 w-4 text-connectivity" />
 
                 <span className="text-xs">Upload</span>
               </div>
@@ -89,6 +89,9 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
         <div>
           {hasPromotion && promotionalPrice ? (
             <>
+              <div className="mb-2 inline-flex items-center rounded-full border border-promotion/30 bg-promotion/10 px-2.5 py-1 text-xs font-medium text-promotion-foreground">
+                Oferta promocional
+              </div>
               <p className="text-sm text-muted-foreground">A partir de</p>
 
               <div className="flex items-end gap-2">
@@ -126,7 +129,7 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
             <ul className="space-y-2">
               {plan.benefits.map((benefit, index) => (
                 <li key={`${benefit.name}-${index}`} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 shrink-0" />
+                  <Check className="h-4 w-4 shrink-0 text-success" />
 
                   <span>{benefit.name}</span>
                 </li>
@@ -139,7 +142,7 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
         <div className="space-y-2 border-t pt-4 text-sm text-muted-foreground">
           {installationIsFree && (
             <div className="flex items-center gap-2">
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 text-success" />
 
               <span>Instalação grátis</span>
             </div>

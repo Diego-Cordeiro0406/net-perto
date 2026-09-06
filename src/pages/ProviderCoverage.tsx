@@ -14,6 +14,8 @@ import { DeleteProviderCoverageDialog } from "@/components/DeleteProviderCoverag
 import { COVERAGE_STATUS } from "@/lib/constants";
 
 import type { Database } from "@/integrations/supabase/types";
+import { PageLoading } from "@/components/PageLoading";
+import { Loading } from "@/components/Loading";
 
 type ProviderCoverage = Database["public"]["Tables"]["provider_coverage"]["Row"];
 
@@ -47,7 +49,7 @@ export default function ProviderCoverage() {
   } = useProviderCoverage(id);
 
   if (isLoadingProvider) {
-    return <p>Carregando provedor...</p>;
+    return <PageLoading message="Carregando provedor..." />;
   }
 
   if (providerError || !provider) {
@@ -92,9 +94,7 @@ export default function ProviderCoverage() {
         </CardHeader>
 
         <CardContent>
-          {isLoadingCoverage && (
-            <p className="text-sm text-muted-foreground">Carregando coberturas...</p>
-          )}
+          {isLoadingCoverage && <Loading message="Carregando coberturas..." />}
 
           {coverageError && (
             <p className="text-sm text-destructive">Não foi possível carregar as coberturas.</p>

@@ -11,6 +11,7 @@ import { PlanCard } from "@/components/PlanCard";
 import type { Database } from "@/integrations/supabase/types";
 import { PlanDialog } from "@/components/PlanDialog";
 import { DeletePlanDialog } from "@/components/DeletePlanDialog";
+import { PageLoading } from "@/components/PageLoading";
 
 type Plan = Database["public"]["Tables"]["plans"]["Row"];
 
@@ -32,11 +33,7 @@ export default function AdminPlans() {
   };
 
   if (isLoadingProvider) {
-    return (
-      <div className="flex h-40 items-center justify-center">
-        <p className="text-sm text-muted-foreground">Carregando provedor...</p>
-      </div>
-    );
+    return <PageLoading message="Carregando provedor..." />;
   }
 
   if (!provider) {

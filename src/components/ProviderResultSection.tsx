@@ -10,7 +10,7 @@ export function ProviderResultSection({ provider, plans }: ProviderGroup) {
   return (
     <section className="space-y-4">
       {/* Cabeçalho do provedor */}
-      <Card className="p-5 border-none">
+      <Card className="border-border/70 p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
@@ -21,7 +21,7 @@ export function ProviderResultSection({ provider, plans }: ProviderGroup) {
                   className="size-full object-contain"
                 />
               ) : (
-                <span className="text-lg font-semibold text-muted-foreground">
+                <span className="text-lg font-bold text-primary">
                   {provider.name.charAt(0).toUpperCase()}
                 </span>
               )}

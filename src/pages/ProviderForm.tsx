@@ -16,6 +16,7 @@ import { ProviderPhotoUpload } from "@/components/ProviderPhotoUpload";
 import { Camera } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { saveProviderLogo } from "@/services/providerLogo";
+import { PageLoading } from "@/components/PageLoading";
 
 export default function ProviderForm() {
   const navigate = useNavigate();
@@ -117,13 +118,7 @@ export default function ProviderForm() {
   const mutationError = createProvider.error || updateProvider.error;
 
   if (isEditing && isLoadingProvider) {
-    return (
-      <section className="mx-auto w-full max-w-2xl">
-        <div className="flex h-40 items-center justify-center">
-          <p className="text-sm text-muted-foreground">Carregando provedor...</p>
-        </div>
-      </section>
-    );
+    return <PageLoading message="Carregando provedor..." />;
   }
 
   if (isEditing && providerError) {

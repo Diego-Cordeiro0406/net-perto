@@ -39,44 +39,61 @@ export default function Index() {
         canonical="/"
       />
 
-      <section className="w-full max-w-3xl text-center">
-        <div className="space-y-5">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+      <main className="space-y-5">
+        <section className="space-y-5 flex flex-col items-center">
+          <div
+            className="animate-fade-up inline-flex items-center rounded-full bg-connectivity/10 px-3 py-1 text-sm font-medium text-connectivity-foreground"
+            style={{ animationDelay: "0ms" }}
+          >
+            Compare provedores da sua região
+          </div>
+
+          <h1
+            className="animate-fade-up text-4xl font-bold tracking-tight sm:text-5xl"
+            style={{ animationDelay: "100ms" }}
+          >
             Encontre internet para sua região
           </h1>
 
-          <p className="text-lg text-muted-foreground sm:text-xl">
+          <p
+            className="animate-fade-up text-lg text-muted-foreground sm:text-xl"
+            style={{ animationDelay: "200ms" }}
+          >
             Descubra provedores e planos disponíveis no seu bairro.
           </p>
+        </section>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-xl pt-4">
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="flex-1">
-                <NeighborhoodAutocomplete
-                  value={neighborhoodId}
-                  onValueChange={(value) => {
-                    setValue("neighborhoodId", value, {
-                      shouldValidate: true,
-                    });
-                  }}
-                  disabled={isSubmitting}
-                  placeholder="Digite seu bairro"
-                />
-              </div>
-
-              <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
-                {isSubmitting ? "Buscando..." : "Buscar"}
-              </Button>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="animate-fade-up mx-auto w-full max-w-xl pt-4"
+          style={{ animationDelay: "300ms" }}
+        >
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex-1">
+              <NeighborhoodAutocomplete
+                value={neighborhoodId}
+                onValueChange={(value) => {
+                  setValue("neighborhoodId", value, {
+                    shouldValidate: true,
+                  });
+                }}
+                disabled={isSubmitting}
+                placeholder="Digite seu bairro"
+              />
             </div>
 
-            {errors.neighborhoodId && (
-              <p className="mt-2 text-left text-sm text-destructive">
-                {errors.neighborhoodId.message}
-              </p>
-            )}
-          </form>
-        </div>
-      </section>
+            <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
+              {isSubmitting ? "Buscando..." : "Buscar"}
+            </Button>
+          </div>
+
+          {errors.neighborhoodId && (
+            <p className="mt-2 text-left text-sm text-destructive">
+              {errors.neighborhoodId.message}
+            </p>
+          )}
+        </form>
+      </main>
     </section>
   );
 }

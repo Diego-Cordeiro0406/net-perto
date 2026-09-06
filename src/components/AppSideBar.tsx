@@ -12,12 +12,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "./ui/badge";
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { state } = useSidebar();
 
   const handleSignOut = async () => {
     try {
@@ -92,7 +94,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <Badge className="ml-1">
               <Shield />
-              <span className="text-xs text-muted-white">Admin</span>
+              {state !== "collapsed" && <span className="text-xs text-muted-white">Admin</span>}
             </Badge>
             <SidebarMenuButton onClick={handleSignOut}>
               <LogOut />
