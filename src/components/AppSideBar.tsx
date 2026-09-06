@@ -9,7 +9,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -34,26 +33,6 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-16 border-b">
-        {state === "collapsed" ? (
-          <NavLink to="/admin" className="flex items-center gap-2 px-1 py-3">
-            <div className="flex">
-              <span className="text-xl font-extralight">N</span>
-
-              <span className="text-xl font-extrabold">P</span>
-            </div>
-          </NavLink>
-        ) : (
-          <NavLink to="/admin" className="flex items-center gap-2 px-2 py-3">
-            <div className="flex">
-              <span className="text-2xl font-extralight">Net</span>
-
-              <span className="text-2xl font-extrabold">Perto</span>
-            </div>
-          </NavLink>
-        )}
-      </SidebarHeader>
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Administração</SidebarGroupLabel>
@@ -113,9 +92,9 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Badge>
+            <Badge className="ml-1">
               <Shield />
-              <span className="text-xs text-muted-white">Admin</span>
+              {state !== "collapsed" && <span className="text-xs text-muted-white">Admin</span>}
             </Badge>
             <SidebarMenuButton onClick={handleSignOut}>
               <LogOut />

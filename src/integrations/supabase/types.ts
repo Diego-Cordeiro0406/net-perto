@@ -23,42 +23,96 @@ export type Database = {
         };
         Relationships: [];
       };
+      neighborhoods: {
+        Row: {
+          city: string;
+          created_at: string;
+          id: string;
+          name: string;
+          normalized_name: string;
+          state: string;
+          updated_at: string;
+        };
+        Insert: {
+          city?: string;
+          created_at?: string;
+          id?: string;
+          name: string;
+          normalized_name: string;
+          state?: string;
+          updated_at?: string;
+        };
+        Update: {
+          city?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          normalized_name?: string;
+          state?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       plans: {
         Row: {
+          benefits: Json;
+          contract_months: number | null;
           created_at: string;
+          description: string | null;
           download_speed: number;
           id: string;
+          installation_fee: number | null;
+          is_active: boolean;
           last_checked_at: string | null;
           name: string;
           price: number;
+          promotional_months: number | null;
+          promotional_price: number | null;
           provider_id: string;
           source_url: string;
           updated_at: string;
           upload_speed: number;
+          wifi_type: string | null;
         };
         Insert: {
+          benefits?: Json;
+          contract_months?: number | null;
           created_at?: string;
+          description?: string | null;
           download_speed: number;
           id?: string;
+          installation_fee?: number | null;
+          is_active?: boolean;
           last_checked_at?: string | null;
           name: string;
           price: number;
+          promotional_months?: number | null;
+          promotional_price?: number | null;
           provider_id: string;
           source_url: string;
           updated_at?: string;
           upload_speed: number;
+          wifi_type?: string | null;
         };
         Update: {
+          benefits?: Json;
+          contract_months?: number | null;
           created_at?: string;
+          description?: string | null;
           download_speed?: number;
           id?: string;
+          installation_fee?: number | null;
+          is_active?: boolean;
           last_checked_at?: string | null;
           name?: string;
           price?: number;
+          promotional_months?: number | null;
+          promotional_price?: number | null;
           provider_id?: string;
           source_url?: string;
           updated_at?: string;
           upload_speed?: number;
+          wifi_type?: string | null;
         };
         Relationships: [
           {
@@ -76,38 +130,42 @@ export type Database = {
           id: string;
           last_checked_at: string | null;
           neighborhood: string | null;
+          neighborhood_id: string;
           provider_id: string;
           source: string;
           status: string;
-          street: string | null;
           updated_at: string;
-          zip_code: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           last_checked_at?: string | null;
           neighborhood?: string | null;
+          neighborhood_id: string;
           provider_id: string;
           source: string;
           status: string;
-          street?: string | null;
           updated_at?: string;
-          zip_code: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           last_checked_at?: string | null;
           neighborhood?: string | null;
+          neighborhood_id?: string;
           provider_id?: string;
           source?: string;
           status?: string;
-          street?: string | null;
           updated_at?: string;
-          zip_code?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "provider_coverage_neighborhood_id_fkey";
+            columns: ["neighborhood_id"];
+            isOneToOne: false;
+            referencedRelation: "neighborhoods";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "provider_coverage_provider_id_fkey";
             columns: ["provider_id"];

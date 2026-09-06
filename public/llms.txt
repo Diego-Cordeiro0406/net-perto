@@ -1,0 +1,31 @@
+# NetPerto
+
+> Compare provedores e planos de internet disponíveis em Petrolina, Pernambuco.
+
+## Sobre
+
+O NetPerto ajuda moradores de Petrolina-PE a encontrar provedores de internet
+e comparar planos disponíveis em sua região.
+
+## Funcionalidades
+
+- Busca de provedores por CEP
+- Consulta de disponibilidade por região
+- Comparação de planos de internet
+- Informações sobre velocidades de download e upload
+- Consulta de preços e condições dos planos
+
+## Páginas
+
+- [Página inicial](https://netperto.com.br/)
+- [Busca por CEP](https://netperto.com.br/search)
+
+## Área de atendimento
+
+O NetPerto atualmente concentra sua cobertura em Petrolina, Pernambuco, Brasil.
+
+## Dados
+
+As informações sobre provedores, planos e cobertura são coletadas de fontes
+oficiais e podem sofrer alterações. O usuário deve confirmar disponibilidade,
+preços e condições diretamente com o provedor antes de contratar um serviço.

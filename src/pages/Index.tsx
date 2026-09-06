@@ -1,69 +1,99 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
+import { PageSEO } from "@/components/PageSEO";
+import { NeighborhoodAutocomplete } from "@/components/NeighborhoodAutocomplete";
 
 export default function Index() {
+  const navigate = useNavigate();
+
   const {
-    register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SearchFormData>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      zipCode: "",
+      neighborhoodId: "",
     },
   });
 
+  const neighborhoodId = useWatch({
+    control,
+    name: "neighborhoodId",
+  });
+
   const onSubmit = (data: SearchFormData) => {
-    console.log("CEP:", data.zipCode);
+    navigate(`/search?neighborhood=${data.neighborhoodId}`);
   };
 
   return (
     <section className="flex min-h-full items-center justify-center px-4">
-      <section className="w-full max-w-3xl text-center">
-        <div className="space-y-5">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+      <PageSEO
+        title="Encontre internet em Petrolina"
+        description="Encontre e compare provedores e planos de internet disponíveis em Petrolina, Pernambuco."
+        canonical="/"
+      />
+
+      <main className="space-y-5">
+        <section className="space-y-5 flex flex-col items-center">
+          <div
+            className="animate-fade-up inline-flex items-center rounded-full bg-connectivity/10 px-3 py-1 text-sm font-medium text-connectivity-foreground"
+            style={{ animationDelay: "0ms" }}
+          >
+            Compare provedores da sua região
+          </div>
+
+          <h1
+            className="animate-fade-up text-4xl font-bold tracking-tight sm:text-5xl"
+            style={{ animationDelay: "100ms" }}
+          >
             Encontre internet para sua região
           </h1>
 
-          <p className="text-lg text-muted-foreground sm:text-xl">
-            Descubra provedores e planos disponíveis em Petrolina.
+          <p
+            className="animate-fade-up text-lg text-muted-foreground sm:text-xl"
+            style={{ animationDelay: "200ms" }}
+          >
+            Descubra provedores e planos disponíveis no seu bairro.
           </p>
+        </section>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-xl pt-4">
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <MapPin
-                  className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground"
-                  aria-hidden="true"
-                />
-
-                <Input
-                  {...register("zipCode")}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Digite seu CEP"
-                  className="h-12 pl-10 text-base"
-                  maxLength={9}
-                  aria-invalid={!!errors.zipCode}
-                />
-              </div>
-
-              <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
-                {isSubmitting ? "Buscando..." : "Buscar"}
-              </Button>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="animate-fade-up mx-auto w-full max-w-xl pt-4"
+          style={{ animationDelay: "300ms" }}
+        >
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex-1">
+              <NeighborhoodAutocomplete
+                value={neighborhoodId}
+                onValueChange={(value) => {
+                  setValue("neighborhoodId", value, {
+                    shouldValidate: true,
+                  });
+                }}
+                disabled={isSubmitting}
+                placeholder="Digite seu bairro"
+              />
             </div>
 
-            {errors.zipCode && (
-              <p className="mt-2 text-left text-sm text-destructive">{errors.zipCode.message}</p>
-            )}
-          </form>
-        </div>
-      </section>
+            <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
+              {isSubmitting ? "Buscando..." : "Buscar"}
+            </Button>
+          </div>
+
+          {errors.neighborhoodId && (
+            <p className="mt-2 text-left text-sm text-destructive">
+              {errors.neighborhoodId.message}
+            </p>
+          )}
+        </form>
+      </main>
     </section>
   );
 }

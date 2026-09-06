@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ArrowLeft, Pencil, Plus, Trash2, Wifi } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -6,22 +7,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useProvider } from "@/hooks/useProviders";
 import { useProviderCoverage } from "@/hooks/useProviderCoverage";
-import { useState } from "react";
-import type { Database } from "@/integrations/supabase/types";
+
 import { ProviderCoverageDialog } from "@/components/ProviderCoverageDialog";
 import { DeleteProviderCoverageDialog } from "@/components/DeleteProviderCoverageDialog";
-import { formatZipCode } from "@/lib/formatters";
+
 import { COVERAGE_STATUS } from "@/lib/constants";
 
+import type { Database } from "@/integrations/supabase/types";
+import { PageLoading } from "@/components/PageLoading";
+import { Loading } from "@/components/Loading";
+
 type ProviderCoverage = Database["public"]["Tables"]["provider_coverage"]["Row"];
+
+type ProviderCoverageWithNeighborhood = ProviderCoverage & {
+  neighborhoods: {
+    id: string;
+    name: string;
+  } | null;
+};
 
 export default function ProviderCoverage() {
   const { id } = useParams();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCoverage, setSelectedCoverage] = useState<ProviderCoverageWithNeighborhood | null>(
+    null
+  );
 
-  const [selectedCoverage, setSelectedCoverage] = useState<ProviderCoverage | null>(null);
-  const [coverageToDelete, setCoverageToDelete] = useState<ProviderCoverage | null>(null);
+  const [coverageToDelete, setCoverageToDelete] = useState<ProviderCoverageWithNeighborhood | null>(
+    null
+  );
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { data: provider, isLoading: isLoadingProvider, error: providerError } = useProvider(id);
@@ -33,7 +49,7 @@ export default function ProviderCoverage() {
   } = useProviderCoverage(id);
 
   if (isLoadingProvider) {
-    return <p>Carregando provedor...</p>;
+    return <PageLoading message="Carregando provedor..." />;
   }
 
   if (providerError || !provider) {
@@ -56,7 +72,7 @@ export default function ProviderCoverage() {
           <h1 className="text-2xl font-semibold">Cobertura</h1>
 
           <p className="text-sm text-muted-foreground">
-            Gerencie os CEPs atendidos por <strong>{provider.name}</strong>.
+            Gerencie os bairros atendidos por <strong>{provider.name}</strong>.
           </p>
         </div>
 
@@ -74,13 +90,11 @@ export default function ProviderCoverage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>CEPs atendidos</CardTitle>
+          <CardTitle>Bairros atendidos</CardTitle>
         </CardHeader>
 
         <CardContent>
-          {isLoadingCoverage && (
-            <p className="text-sm text-muted-foreground">Carregando coberturas...</p>
-          )}
+          {isLoadingCoverage && <Loading message="Carregando coberturas..." />}
 
           {coverageError && (
             <p className="text-sm text-destructive">Não foi possível carregar as coberturas.</p>
@@ -93,7 +107,7 @@ export default function ProviderCoverage() {
               <p className="font-medium">Nenhuma cobertura cadastrada</p>
 
               <p className="text-sm text-muted-foreground">
-                Adicione os CEPs atendidos por este provedor.
+                Adicione os bairros atendidos por este provedor.
               </p>
             </div>
           )}
@@ -106,8 +120,9 @@ export default function ProviderCoverage() {
                   className="flex items-center justify-between rounded-lg border p-4"
                 >
                   <div>
-                    <div></div>
-                    <p className="font-medium">{`${item.neighborhood} - ${formatZipCode(item.zip_code)} - ${item?.street}`}</p>
+                    <p className="font-medium">
+                      {item.neighborhoods?.name ?? "Bairro não encontrado"}
+                    </p>
 
                     <p className="text-sm text-muted-foreground">
                       Status: {COVERAGE_STATUS[item.status]}
@@ -146,6 +161,7 @@ export default function ProviderCoverage() {
           )}
         </CardContent>
       </Card>
+
       <ProviderCoverageDialog
         providerId={provider.id}
         coverage={selectedCoverage}

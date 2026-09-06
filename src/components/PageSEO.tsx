@@ -1,16 +1,8 @@
+import type { PageSEOProps } from "@/types/types";
 import { Helmet } from "react-helmet-async";
 
 const BASE_URL = "https://netperto.com.br";
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
-
-interface PageSEOProps {
-  title: string;
-  description: string;
-  canonical?: string;
-  image?: string;
-  type?: string;
-  noindex?: boolean;
-}
 
 export function PageSEO({
   title,

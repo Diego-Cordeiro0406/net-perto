@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import {
@@ -26,9 +25,12 @@ import { providerCoverageSchema, type ProviderCoverageFormData } from "@/lib/val
 
 import { useCreateProviderCoverage, useUpdateProviderCoverage } from "@/hooks/useProviderCoverage";
 
+import { useNeighborhoods } from "@/hooks/useNeighborhoods";
+
 import type { Database } from "@/integrations/supabase/types";
 import { toast } from "./ui/toast";
-import { fetchAddress } from "@/hooks/useFetchAddress";
+import { Input } from "./ui/input";
+import { NeighborhoodCombobox } from "./NeighborhoodCombobox";
 
 type ProviderCoverage = Database["public"]["Tables"]["provider_coverage"]["Row"];
 
@@ -47,10 +49,10 @@ export function ProviderCoverageDialog({
 }: ProviderCoverageDialogProps) {
   const isEditing = Boolean(coverage);
 
-  const [isFetchingAddress, setIsFetchingAddress] = useState(false);
-
   const createCoverage = useCreateProviderCoverage();
   const updateCoverage = useUpdateProviderCoverage();
+
+  const { isLoading: isLoadingNeighborhoods } = useNeighborhoods();
 
   const {
     register,
@@ -62,11 +64,10 @@ export function ProviderCoverageDialog({
   } = useForm<ProviderCoverageFormData>({
     resolver: zodResolver(providerCoverageSchema),
     defaultValues: {
-      zip_code: "",
-      street: "",
-      neighborhood: "",
+      neighborhood_id: "",
       status: "available",
       source: "",
+      last_checked_at: undefined,
     },
   });
 
@@ -75,56 +76,22 @@ export function ProviderCoverageDialog({
     name: "status",
   });
 
-  const zipCode = useWatch({
+  const neighborhoodId = useWatch({
     control,
-    name: "zip_code",
+    name: "neighborhood_id",
   });
-
-  useEffect(() => {
-    const cleanCep = zipCode?.replace(/\D/g, "");
-
-    if (cleanCep?.length !== 8) {
-      return;
-    }
-
-    const loadAddress = async () => {
-      try {
-        setIsFetchingAddress(true);
-
-        const address = await fetchAddress(cleanCep);
-
-        setValue("street", address.street);
-        setValue("neighborhood", address.neighborhood);
-      } catch (error) {
-        console.error("Erro ao buscar endereço:", error);
-
-        setValue("street", "");
-        setValue("neighborhood", "");
-
-        toast.add({
-          title: "Erro ao buscar CEP",
-          description: "Não foi possível obter os dados desse CEP.",
-          type: "error",
-        });
-      } finally {
-        setIsFetchingAddress(false);
-      }
-    };
-
-    loadAddress();
-  }, [zipCode, setValue]);
 
   useEffect(() => {
     if (coverage) {
       reset({
-        zip_code: coverage.zip_code,
+        neighborhood_id: coverage.neighborhood_id,
         status: coverage.status,
-        source: coverage.source,
+        source: coverage.source ?? "",
         last_checked_at: coverage.last_checked_at ?? undefined,
       });
     } else {
       reset({
-        zip_code: "",
+        neighborhood_id: "",
         status: "available",
         source: "",
         last_checked_at: undefined,
@@ -134,15 +101,11 @@ export function ProviderCoverageDialog({
 
   const onSubmit = async (data: ProviderCoverageFormData) => {
     try {
-      const formattedZipCode = data.zip_code.replace(/\D/g, "");
-
       if (isEditing && coverage) {
         await updateCoverage.mutateAsync({
           id: coverage.id,
           data: {
-            zip_code: formattedZipCode,
-            street: data.street,
-            neighborhood: data.neighborhood,
+            neighborhood_id: data.neighborhood_id,
             status: data.status,
             source: data.source,
             last_checked_at: data.last_checked_at || null,
@@ -151,9 +114,7 @@ export function ProviderCoverageDialog({
       } else {
         await createCoverage.mutateAsync({
           provider_id: providerId,
-          zip_code: formattedZipCode,
-          street: data.street,
-          neighborhood: data.neighborhood,
+          neighborhood_id: data.neighborhood_id,
           status: data.status,
           source: data.source,
           last_checked_at: data.last_checked_at || null,
@@ -163,6 +124,13 @@ export function ProviderCoverageDialog({
       onOpenChange(false);
     } catch (error) {
       console.error("Erro ao salvar cobertura:", error);
+
+      toast.add({
+        title: "Erro ao salvar cobertura",
+        description:
+          error instanceof Error ? error.message : "Não foi possível salvar a cobertura.",
+        type: "error",
+      });
     }
   };
 
@@ -177,50 +145,33 @@ export function ProviderCoverageDialog({
           <DialogDescription>
             {isEditing
               ? "Atualize as informações da cobertura."
-              : "Informe um CEP atendido pelo provedor."}
+              : "Informe o bairro atendido pelo provedor."}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="zip_code">CEP</Label>
+            <Label htmlFor="neighborhood_id">Bairro</Label>
 
-            <Input id="zip_code" placeholder="56302-000" {...register("zip_code")} />
+            <NeighborhoodCombobox
+              value={neighborhoodId}
+              onValueChange={(value) => {
+                setValue("neighborhood_id", value, {
+                  shouldValidate: true,
+                });
+              }}
+              disabled={isSubmitting}
+            />
 
-            {errors.zip_code && (
-              <p className="text-sm text-destructive">{errors.zip_code.message}</p>
+            {errors.neighborhood_id && (
+              <p className="text-sm text-destructive">{errors.neighborhood_id.message}</p>
             )}
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="street">Logradouro</Label>
-
-              <Input
-                id="street"
-                readOnly
-                placeholder={isFetchingAddress ? "Buscando endereço..." : "Informe o CEP"}
-                {...register("street")}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="neighborhood">Bairro</Label>
-
-              <Input
-                id="neighborhood"
-                readOnly
-                placeholder={isFetchingAddress ? "Buscando endereço..." : "Informe o CEP"}
-                {...register("neighborhood")}
-              />
-            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
 
             <Select
-              id="status"
               value={status}
               onValueChange={(value) => {
                 if (value) {
@@ -265,7 +216,11 @@ export function ProviderCoverageDialog({
               Cancelar
             </Button>
 
-            <Button className="h-10" type="submit" disabled={isSubmitting}>
+            <Button
+              className="h-10"
+              type="submit"
+              disabled={isSubmitting || isLoadingNeighborhoods}
+            >
               {isSubmitting
                 ? "Salvando..."
                 : isEditing
