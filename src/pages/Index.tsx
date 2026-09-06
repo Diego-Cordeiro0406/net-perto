@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
 import { PageSEO } from "@/components/PageSEO";
 import { NeighborhoodAutocomplete } from "@/components/NeighborhoodAutocomplete";
+import { useTheme } from "next-themes";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const {
     handleSubmit,
@@ -42,7 +44,7 @@ export default function Index() {
       <main className="space-y-5">
         <section className="space-y-5 flex flex-col items-center">
           <div
-            className="animate-fade-up inline-flex items-center rounded-full bg-connectivity/10 px-3 py-1 text-sm font-medium text-connectivity-foreground"
+            className={`animate-fade-up inline-flex items-center rounded-full ${theme === "light" ? "bg-connectivity/10" : "bg-connectivity"} px-3 py-1 text-sm font-medium text-connectivity-foreground`}
             style={{ animationDelay: "0ms" }}
           >
             Compare provedores da sua região
