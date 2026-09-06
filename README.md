@@ -55,7 +55,7 @@ A plataforma reunirá informações como:
 ```text
 Usuário acessa o NetPerto
         ↓
-Informa seu CEP
+Informa seu Bairro
         ↓
 Encontra provedores para sua região
         ↓
@@ -106,13 +106,13 @@ O MVP será focado na cidade de **Petrolina - PE**.
 
 ## Funcionalidades iniciais
 
-### 🔎 Busca por CEP
+### 🔎 Busca por Bairro
 
-O usuário poderá informar seu CEP para visualizar informações relacionadas à sua região.
+O usuário poderá informar seu Bairro para visualizar informações relacionadas à sua região.
 
 ### 📡 Lista de provedores
 
-A aplicação exibirá os provedores encontrados para o CEP pesquisado.
+A aplicação exibirá os provedores encontrados para o Bairro pesquisado.
 
 ### 📶 Informações de cobertura
 
@@ -183,8 +183,7 @@ Os dados de cobertura poderão possuir diferentes níveis de confirmação.
 
 | Status          | Descrição                                                                |
 | --------------- | ------------------------------------------------------------------------ |
-| `confirmed`     | Cobertura confirmada para o CEP                                          |
-| `regional`      | O provedor atua na região, mas a cobertura específica não foi confirmada |
+| `available`     | Cobertura confirmada para o Bairro                                       |
 | `unknown`       | Não existem dados suficientes sobre a cobertura                          |
 | `not_available` | O provedor confirmou que não atende a região                             |
 
@@ -285,6 +284,7 @@ providers
 | `whatsapp`   | WhatsApp                   |
 | `created_at` | Data de criação            |
 | `updated_at` | Data da última atualização |
+| `logo_url`   | Logo do provedor           |
 
 ---
 
@@ -296,17 +296,24 @@ Armazena os planos oferecidos pelos provedores.
 plans
 ```
 
-| Campo             | Descrição                       |
-| ----------------- | ------------------------------- |
-| `id`              | Identificador                   |
-| `provider_id`     | Provedor responsável pelo plano |
-| `name`            | Nome do plano                   |
-| `download_speed`  | Velocidade de download          |
-| `price`           | Preço                           |
-| `source_url`      | Fonte da informação             |
-| `last_checked_at` | Última verificação              |
-| `created_at`      | Data de criação                 |
-| `updated_at`      | Data da última atualização      |
+| Campo               | Descrição                       |
+| -----------------   | ------------------------------- |
+| `id`                | Identificador                   |
+| `provider_id`       | Provedor responsável pelo plano |
+| `name`              | Nome do plano                   |
+| `download_speed`    | Velocidade de download          |
+| `price`             | Preço                           |
+| `source_url`        | Fonte da informação             |
+| `last_checked_at`   | Última verificação              |
+| `created_at`        | Data de criação                 |
+| `updated_at`        | Data da última atualização      |
+| `promotional_price` | Preço promocial                 |
+| `promotional_months`| Tempo da promoção               |
+| `benefits`          | Beneficios incluidos no plano   |
+| `installation_fee`  | Taxa de instalação              |
+| `contract_months`   | Tempo de fidelidade             |
+| `is_active`         | Plano ativo ou inativo          |
+| `wifi_type`         | Tipo do wi-fi oferecido no plano|
 
 ### Relação
 
@@ -328,16 +335,17 @@ Armazena informações sobre a cobertura dos provedores.
 provider_coverage
 ```
 
-| Campo             | Descrição                  |
-| ----------------- | -------------------------- |
-| `id`              | Identificador              |
-| `provider_id`     | Provedor                   |
-| `zip_code`        | CEP                        |
-| `status`          | Status da cobertura        |
-| `source`          | Fonte da informação        |
-| `last_checked_at` | Última verificação         |
-| `created_at`      | Data de criação            |
-| `updated_at`      | Data da última atualização |
+| Campo               | Descrição                     |
+| -----------------   | --------------------------    |
+| `id`                | Identificador                 |
+| `provider_id`       | Provedor                      |
+| `neighborhood`      | Bairro                        |
+| `neighborhood_id`   | Bairro relacionado a cobertura|
+| `status`            | Status da cobertura           |
+| `source`            | Fonte da informação           |
+| `last_checked_at`   | Última verificação            |
+| `created_at`        | Data de criação               |
+| `updated_at`        | Data da última atualização    |
 
 ### Relação
 
@@ -346,6 +354,35 @@ Provider 1 ───── N Provider Coverage
 ```
 
 Um provedor pode possuir informações de cobertura para diversos CEPs.
+
+---
+
+## Neighborhoods
+
+Armazena informações sobre os bairros da cidade(apenas Petrolina atualmente).
+
+```text
+neighborhoods
+```
+
+| Campo               | Descrição                            |
+| --------------------| -------------------------------------|
+| `id`                | Identificador                        |
+| `name`              | nome do bairro                       |
+| `normalized_name`   | nome do bairro normalizado           |
+| `neighborhood_id`   | Bairro relacionado a cobertura       |
+| `city`              | cidade onde o bairro está localizado |
+| `state`             | estado onde o bairro está localizado |
+| `created_at`        | Data de criação                      |
+| `updated_at`        | Data da última atualização           |
+
+### Relação
+
+```text
+Neighborhood 1 ───── N Provider Coverage
+```
+
+Um bairro pode estar associado a diversas coberturas.
 
 ---
 
@@ -366,22 +403,30 @@ Um provedor pode possuir informações de cobertura para diversos CEPs.
                 │ 1                   │ 1
                 │                     │
                 ▼ N                   ▼ N
-          ┌───────────┐         ┌───────────────────┐
-          │   plans   │         │ provider_coverage │
-          ├───────────┤         ├───────────────────┤
-          │ id        │         │ id                │
-          │ provider_id│        │ provider_id       │
-          │ name      │         │ zip_code          │
-          │ price     │         │ status            │
-          │ speed     │         │ source            │
-          └───────────┘         └───────────────────┘
-```
-
-A tabela `provider_coverage` deverá possuir uma restrição para evitar registros duplicados:
-
-```text
-UNIQUE(provider_id, zip_code)
-```
+          ┌────────────┐         ┌───────────────────┐
+          │   plans    │         │ provider_coverage │
+          ├────────────┤         ├───────────────────┤
+          │ id         │         │ id                │
+          │ provider_id│         │ provider_id       │
+          │ name       │         │ zip_code          │
+          │ price      │         │ status            │
+          │ speed      │         │ source            │
+          └────────────┘         └───────────────────┘
+                                         │
+                                         │
+                                         │ N
+                                         │
+                                         ▼ 1
+                                 ┌───────────────────┐
+                                 │ neighborhoods     │
+                                 ├───────────────────┤
+                                 │ id                │
+                                 │ name              │
+                                 │ normalized_name   │
+                                 │ neighborhood_id   │
+                                 │ city              │
+                                 │ state             │
+                                 └───────────────────┘
 
 ---
 
