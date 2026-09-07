@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import { trackSearch } from "@/lib/analytics";
 import type { SelectedNeighborhood } from "@/types/types";
+import { NetworkBackground } from "@/components/NetworkBackground";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -45,31 +46,35 @@ export default function Index() {
   };
 
   return (
-    <section className="flex min-h-full items-center justify-center px-4">
+    <section className="relative flex min-h-full items-center justify-center overflow-hidden px-4">
       <PageSEO
         title="Encontre internet em Petrolina"
         description="Encontre e compare provedores e planos de internet disponíveis em Petrolina, Pernambuco."
         canonical="/"
       />
 
-      <main className="space-y-5">
-        <section className="space-y-5 flex flex-col items-center">
+      <NetworkBackground theme={theme} />
+
+      <main className="relative z-10 w-full space-y-5">
+        <section className="flex flex-col items-center space-y-5">
           <div
-            className={`animate-fade-up inline-flex items-center rounded-full ${theme === "light" ? "bg-connectivity/10" : "bg-connectivity"} px-3 py-1 text-sm font-medium text-connectivity-foreground`}
+            className={`animate-fade-up inline-flex items-center rounded-full ${
+              theme === "light" ? "bg-connectivity/10" : "bg-connectivity"
+            } px-3 py-1 text-sm font-medium text-connectivity-foreground`}
             style={{ animationDelay: "0ms" }}
           >
             Compare provedores da sua região
           </div>
 
           <h1
-            className="animate-fade-up text-4xl font-bold tracking-tight sm:text-5xl"
+            className="animate-fade-up text-center text-4xl font-bold tracking-tight sm:text-5xl"
             style={{ animationDelay: "100ms" }}
           >
             Encontre internet para sua região
           </h1>
 
           <p
-            className="animate-fade-up text-lg text-muted-foreground sm:text-xl"
+            className="animate-fade-up text-center text-lg text-muted-foreground sm:text-xl"
             style={{ animationDelay: "200ms" }}
           >
             Descubra provedores e planos disponíveis no seu bairro.

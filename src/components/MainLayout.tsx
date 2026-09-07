@@ -45,7 +45,7 @@ export function MainLayout() {
           <ThemeToggle />
         </header>
 
-        <main className="flex-1 bg-background p-6">
+        <main className="flex-1 bg-background">
           <Outlet />
         </main>
       </section>
