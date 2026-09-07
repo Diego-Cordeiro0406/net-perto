@@ -257,3 +257,107 @@
     }
   }
 }
+
+@keyframes network-pulse-1 {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes network-pulse-2 {
+  0% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+}
+
+@keyframes network-pulse-3 {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.network-pulse {
+  offset-rotate: 0deg;
+  animation-duration: 12s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.network-pulse-1 {
+  offset-path: path(
+    "M40 140 L220 80 L390 160 L560 90 L760 170 L950 100 L1160 180"
+  );
+  animation-name: network-pulse-1;
+}
+
+.network-pulse-2 {
+  offset-path: path(
+    "M80 390 L250 300 L430 370 L600 280 L790 360 L980 290 L1140 380"
+  );
+  animation-name: network-pulse-2;
+  animation-delay: 4s;
+}
+
+.network-pulse-3 {
+  offset-path: path("M220 80 L250 300");
+  animation-name: network-pulse-3;
+  animation-delay: 8s;
+}
+
+.network-background-light svg {
+  opacity: 1.25;
+}
