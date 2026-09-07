@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PlanResultCard } from "@/components/PlanResultCard";
 import type { ProviderGroup } from "@/types/types";
 import { getPublicUrl } from "@/lib/storage";
+import { trackProviderWebsiteClick } from "@/lib/analytics";
 
 export function ProviderResultSection({ provider, plans }: ProviderGroup) {
   return (
@@ -40,6 +41,10 @@ export function ProviderResultSection({ provider, plans }: ProviderGroup) {
             nativeButton={false}
             variant="outline"
             render={<a href={provider.website} target="_blank" rel="noopener noreferrer" />}
+
+            onClick={() => {
+              trackProviderWebsiteClick({ name: provider.name, id: provider.id });
+            }}
           >
             Visitar site do provedor
             <ExternalLink />

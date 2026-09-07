@@ -6,8 +6,11 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/formatters";
 import type { PlanResultCardProps } from "@/types/types";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { trackPlanOfferClick } from "@/lib/analytics";
+import { useTheme } from "next-themes";
 
 export function PlanResultCard({ plan }: PlanResultCardProps) {
+  const { theme } = useTheme();
   const promotionalPrice =
     plan.promotional_price !== null ? formatCurrency(plan.promotional_price) : null;
   const hasPromotion = plan.promotional_price !== null && plan.promotional_months !== null;
@@ -89,7 +92,9 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
         <div>
           {hasPromotion && promotionalPrice ? (
             <>
-              <div className="mb-2 inline-flex items-center rounded-full border border-promotion/30 bg-promotion/10 px-2.5 py-1 text-xs font-medium text-promotion-foreground">
+              <div
+                className={`mb-2 inline-flex items-center rounded-full border border-promotion/30 ${theme === "light" ? "bg-promotion/10" : "bg-promotion"} px-2.5 py-1 text-xs font-medium text-promotion-foreground`}
+              >
                 Oferta promocional
               </div>
               <p className="text-sm text-muted-foreground">A partir de</p>
@@ -171,6 +176,9 @@ export function PlanResultCard({ plan }: PlanResultCardProps) {
           nativeButton={false}
           className="w-full h-10"
           render={<a href={plan.source_url} target="_blank" rel="noopener noreferrer" />}
+          onClick={() => {
+            trackPlanOfferClick(plan);
+          }}
         >
           Ver oferta
           <ExternalLink />
