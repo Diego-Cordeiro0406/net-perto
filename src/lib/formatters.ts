@@ -1,12 +1,12 @@
-export function formatZipCode(zipCode: string) {
-  const cleanZipCode = zipCode.replace(/\D/g, "");
+// export function formatZipCode(zipCode: string) {
+//   const cleanZipCode = zipCode.replace(/\D/g, "");
 
-  if (cleanZipCode.length <= 5) {
-    return cleanZipCode;
-  }
+//   if (cleanZipCode.length <= 5) {
+//     return cleanZipCode;
+//   }
 
-  return cleanZipCode.replace(/^(\d{5})(\d{0,3})$/, "$1-$2");
-}
+//   return cleanZipCode.replace(/^(\d{5})(\d{0,3})$/, "$1-$2");
+// }
 
 export const formatCurrency = (value: number) => {
   if (value === null) {
@@ -18,6 +18,22 @@ export const formatCurrency = (value: number) => {
     currency: "BRL",
   }).format(Number(value));
 };
+
+export function formatDate(date: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+export function formatSpeed(speed: number | null) {
+  if (speed === null) {
+    return "-";
+  }
+
+  return `${speed} Mbps`;
+}
 
 export function normalizeText(value: string) {
   return value

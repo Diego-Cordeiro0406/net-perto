@@ -7,7 +7,7 @@ import { usePlansByNeighborhood } from "@/hooks/usePlansByNeighborhood.ts";
 import type { ProviderGroup } from "@/types/types";
 import { useSingleNeighborhood } from "@/hooks/useNeighborhoods";
 import { SearchResultsSkeleton } from "@/components/skeletons/SearchResultsSkeleton";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getPlanPrice } from "@/lib/utils";
 import {
   Select,
@@ -17,11 +17,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SORT_LABELS } from "@/lib/constants";
+import { trackNoResults, trackSortChange } from "@/lib/analytics";
+
+type SortBy = "price" | "download" | "upload";
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
 
-  const [sortBy, setSortBy] = useState<"price" | "download" | "upload">("price");
+  const [sortBy, setSortBy] = useState<SortBy | null>("price");
 
   const neighborhoodParam = searchParams.get("neighborhood") ?? "";
   const { data: neighborhood, isPending: isNeighborhoodPending } =
@@ -34,6 +37,28 @@ export default function SearchResults() {
   } = usePlansByNeighborhood(neighborhood?.id);
 
   const isLoadingResults = isNeighborhoodPending || isPlansPending;
+  const hasTrackedNoResults = useRef(false);
+
+  useEffect(() => {
+    if (
+      !isLoadingResults &&
+      !isError &&
+      plans &&
+      plans.length === 0 &&
+      !hasTrackedNoResults.current
+    ) {
+      trackNoResults(
+        neighborhood
+          ? {
+              id: neighborhood.id,
+              name: neighborhood.name,
+            }
+          : undefined
+      );
+
+      hasTrackedNoResults.current = true;
+    }
+  }, [isLoadingResults, isError, plans, neighborhood]);
 
   const sortedPlans = useMemo(() => {
     if (!plans) {
@@ -78,6 +103,16 @@ export default function SearchResults() {
       return map;
     }, new Map())
   ).map(([, value]) => value);
+
+  function handleSortChange(value: SortBy | null) {
+    if (!value) {
+      return;
+    }
+
+    setSortBy(value);
+
+    trackSortChange(value);
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -140,13 +175,10 @@ export default function SearchResults() {
                 </p>
               </div>
 
-              <Select
-                value={sortBy}
-                onValueChange={(value) => setSortBy(value as "price" | "download" | "upload")}
-              >
+              <Select value={sortBy} onValueChange={handleSortChange}>
                 <SelectTrigger className="w-full sm:w-48">
                   <ArrowUpDown />
-                  <SelectValue>{SORT_LABELS[sortBy]}</SelectValue>
+                  <SelectValue>{sortBy && SORT_LABELS[sortBy]}</SelectValue>
                 </SelectTrigger>
 
                 <SelectContent>

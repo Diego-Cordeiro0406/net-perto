@@ -4,10 +4,11 @@ import { Check, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNeighborhoods } from "@/hooks/useNeighborhoods";
 import { normalizeText } from "@/lib/formatters";
+import type { SelectedNeighborhood } from "@/types/types";
 
 type NeighborhoodAutocompleteProps = {
   value?: string;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: SelectedNeighborhood | null) => void;
   disabled?: boolean;
   placeholder?: string;
   city?: string;
@@ -66,12 +67,17 @@ export function NeighborhoodAutocomplete({
     setInputValue(value);
     setIsOpen(true);
 
-    onValueChange("");
+    onValueChange(null);
   }
 
   function handleSelect(neighborhood: (typeof neighborhoods)[number]) {
     setInputValue(neighborhood.name);
-    onValueChange(neighborhood.id);
+
+    onValueChange({
+      id: neighborhood.id,
+      name: neighborhood.name,
+    });
+
     setIsOpen(false);
   }
 

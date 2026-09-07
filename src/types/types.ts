@@ -63,3 +63,8 @@ export interface PageSEOProps {
 }
 
 // PROVIDERS COVERAGE E NEIGHBORHOODS TYPES
+
+export type SelectedNeighborhood = {
+  id: string;
+  name: string;
+};

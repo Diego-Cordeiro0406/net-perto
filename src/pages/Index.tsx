@@ -6,9 +6,18 @@ import { Button } from "@/components/ui/button";
 import { searchSchema, type SearchFormData } from "@/lib/validators";
 import { PageSEO } from "@/components/PageSEO";
 import { NeighborhoodAutocomplete } from "@/components/NeighborhoodAutocomplete";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import { trackSearch } from "@/lib/analytics";
+import type { SelectedNeighborhood } from "@/types/types";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState<SelectedNeighborhood | null>(
+    null
+  );
 
   const {
     handleSubmit,
@@ -28,6 +37,10 @@ export default function Index() {
   });
 
   const onSubmit = (data: SearchFormData) => {
+    if (selectedNeighborhood) {
+      trackSearch(selectedNeighborhood);
+    }
+
     navigate(`/search?neighborhood=${data.neighborhoodId}`);
   };
 
@@ -42,7 +55,7 @@ export default function Index() {
       <main className="space-y-5">
         <section className="space-y-5 flex flex-col items-center">
           <div
-            className="animate-fade-up inline-flex items-center rounded-full bg-connectivity/10 px-3 py-1 text-sm font-medium text-connectivity-foreground"
+            className={`animate-fade-up inline-flex items-center rounded-full ${theme === "light" ? "bg-connectivity/10" : "bg-connectivity"} px-3 py-1 text-sm font-medium text-connectivity-foreground`}
             style={{ animationDelay: "0ms" }}
           >
             Compare provedores da sua região
@@ -72,8 +85,10 @@ export default function Index() {
             <div className="flex-1">
               <NeighborhoodAutocomplete
                 value={neighborhoodId}
-                onValueChange={(value) => {
-                  setValue("neighborhoodId", value, {
+                onValueChange={(neighborhood) => {
+                  setSelectedNeighborhood(neighborhood);
+
+                  setValue("neighborhoodId", neighborhood?.id ?? "", {
                     shouldValidate: true,
                   });
                 }}
