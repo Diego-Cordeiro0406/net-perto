@@ -39,6 +39,8 @@ export type PlanResult = {
   source_url: string;
 
   provider: PlanProvider | null;
+
+  coverageStatus: "available" | "unknown" | null;
 };
 
 export type PlanResultCardProps = {
@@ -49,6 +51,7 @@ export type PlanResultCardProps = {
 export type ProviderGroup = {
   provider: NonNullable<PlanResult["provider"]>;
   plans: PlanResult[];
+  coverageStatus: "available" | "unknown" | null;
 };
 
 // PAGESEO TYPES
@@ -65,6 +68,11 @@ export interface PageSEOProps {
 // PROVIDERS COVERAGE E NEIGHBORHOODS TYPES
 
 export type SelectedNeighborhood = {
+  id: string;
+  name: string;
+};
+
+export type Neighborhood = {
   id: string;
   name: string;
 };

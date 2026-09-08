@@ -18,3 +18,16 @@ export const getPlanPrice = (plan: ProviderGroup["plans"][number]) => {
 
   return plan.price;
 };
+
+export const getCoveragePriority = (status: ProviderGroup["coverageStatus"]) => {
+  switch (status) {
+    case "available":
+      return 0;
+
+    case "unknown":
+      return 1;
+
+    default:
+      return 2;
+  }
+};

@@ -6,6 +6,10 @@ import { toast } from "@/components/ui/toast";
 
 type Provider = Database["public"]["Tables"]["providers"]["Row"];
 
+export type ProviderWithCoverageCount = Provider & {
+  coverageCount: number;
+};
+
 type CreateProviderData = Database["public"]["Tables"]["providers"]["Insert"];
 
 type UpdateProviderData = Database["public"]["Tables"]["providers"]["Update"];
@@ -14,19 +18,27 @@ type UpdateProviderData = Database["public"]["Tables"]["providers"]["Update"];
  * Lista todos os provedores.
  */
 export function useProviders() {
-  return useQuery<Provider[]>({
+  return useQuery<ProviderWithCoverageCount[]>({
     queryKey: ["providers"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("providers")
-        .select("*")
+        .select(
+          `
+          *,
+          provider_coverage(count)
+        `
+        )
         .order("name", { ascending: true });
 
       if (error) {
         throw error;
       }
 
-      return data;
+      return data.map((provider) => ({
+        ...provider,
+        coverageCount: provider.provider_coverage[0]?.count ?? 0,
+      }));
     },
   });
 }

@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { CircleAlert, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import type { ProviderGroup } from "@/types/types";
 import { getPublicUrl } from "@/lib/storage";
 import { trackProviderWebsiteClick } from "@/lib/analytics";
 
-export function ProviderResultSection({ provider, plans }: ProviderGroup) {
+export function ProviderResultSection({ provider, plans, coverageStatus }: ProviderGroup) {
   return (
     <section className="space-y-4">
       {/* Cabeçalho do provedor */}
@@ -51,6 +51,21 @@ export function ProviderResultSection({ provider, plans }: ProviderGroup) {
           </Button>
         </div>
       </Card>
+
+      {coverageStatus === "unknown" && (
+        <div className="flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+          <CircleAlert className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+
+          <div>
+            <p className="text-sm font-medium">Cobertura não confirmada</p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              Este provedor atua em Petrolina, mas ainda não conseguimos confirmar a cobertura no
+              seu bairro. Consulte o provedor para verificar a disponibilidade.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Planos */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

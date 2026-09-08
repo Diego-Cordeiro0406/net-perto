@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, Pencil, Plus, Trash2, Wifi } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import { COVERAGE_STATUS } from "@/lib/constants";
 import type { Database } from "@/integrations/supabase/types";
 import { PageLoading } from "@/components/PageLoading";
 import { Loading } from "@/components/Loading";
+import { PaginationComponent } from "@/components/Pagination";
 
 type ProviderCoverage = Database["public"]["Tables"]["provider_coverage"]["Row"];
 
@@ -26,10 +27,15 @@ type ProviderCoverageWithNeighborhood = ProviderCoverage & {
   } | null;
 };
 
+const COVERAGES_PER_PAGE = 10;
+
 export default function ProviderCoverage() {
   const { id } = useParams();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const resultsRef = useRef<HTMLHeadingElement>(null);
+
   const [selectedCoverage, setSelectedCoverage] = useState<ProviderCoverageWithNeighborhood | null>(
     null
   );
@@ -47,6 +53,13 @@ export default function ProviderCoverage() {
     isLoading: isLoadingCoverage,
     error: coverageError,
   } = useProviderCoverage(id);
+
+  const totalPages = Math.ceil(coverage.length / COVERAGES_PER_PAGE);
+
+  const paginatedCoverage = coverage.slice(
+    (currentPage - 1) * COVERAGES_PER_PAGE,
+    currentPage * COVERAGES_PER_PAGE
+  );
 
   if (isLoadingProvider) {
     return <PageLoading message="Carregando provedor..." />;
@@ -68,7 +81,7 @@ export default function ProviderCoverage() {
       </div>
 
       <header className="flex items-center justify-between">
-        <div>
+        <div ref={resultsRef}>
           <h1 className="text-2xl font-semibold">Cobertura</h1>
 
           <p className="text-sm text-muted-foreground">
@@ -114,7 +127,7 @@ export default function ProviderCoverage() {
 
           {coverage.length > 0 && (
             <div className="space-y-3">
-              {coverage.map((item) => (
+              {paginatedCoverage.map((item) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between rounded-lg border p-4"
@@ -161,6 +174,19 @@ export default function ProviderCoverage() {
           )}
         </CardContent>
       </Card>
+
+      <PaginationComponent
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          setCurrentPage(page);
+
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }}
+      />
 
       <ProviderCoverageDialog
         providerId={provider.id}

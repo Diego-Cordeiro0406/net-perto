@@ -27,6 +27,7 @@ export function usePlansByNeighborhood(neighborhoodId?: string) {
         .select(
           `
             provider_id,
+            status,
 
             providers (
               id,
@@ -38,7 +39,7 @@ export function usePlansByNeighborhood(neighborhoodId?: string) {
           `
         )
         .eq("neighborhood_id", neighborhoodId!)
-        .eq("status", "available");
+        .in("status", ["available", "unknown"]);
 
       if (coverageError) {
         throw coverageError;
@@ -64,17 +65,29 @@ export function usePlansByNeighborhood(neighborhoodId?: string) {
       }
 
       const providersMap = new Map(
-        coverages.map((coverage) => [coverage.provider_id, coverage.providers])
+        coverages.map((coverage) => [
+          coverage.provider_id,
+          {
+            provider: coverage.providers,
+            coverageStatus: coverage.status as "available" | "unknown" | null,
+          },
+        ])
       );
 
       return (
-        plans?.map((plan) => ({
-          ...plan,
+        plans?.map((plan) => {
+          const providerData = providersMap.get(plan.provider_id);
 
-          benefits: parseBenefits(plan.benefits),
+          return {
+            ...plan,
 
-          provider: providersMap.get(plan.provider_id) ?? null,
-        })) ?? []
+            benefits: parseBenefits(plan.benefits),
+
+            provider: providerData?.provider ?? null,
+
+            coverageStatus: providerData?.coverageStatus ?? null,
+          };
+        }) ?? []
       );
     },
 
