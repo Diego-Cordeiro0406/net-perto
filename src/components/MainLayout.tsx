@@ -29,7 +29,7 @@ export function MainLayout() {
               <img
                 src="/images/logo-horizontal.png"
                 alt="NetPerto"
-                className="h-9 w-auto object-contain"
+                className="h-11 w-auto object-contain"
               />
             </NavLink>
           </div>
@@ -45,7 +45,7 @@ export function MainLayout() {
           <ThemeToggle />
         </header>
 
-        <main className="flex-1 bg-background">
+        <main className="flex-1 bg-background p-6">
           <Outlet />
         </main>
       </section>

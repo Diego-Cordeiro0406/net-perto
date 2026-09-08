@@ -23,7 +23,11 @@ import {
 
 import { providerCoverageSchema, type ProviderCoverageFormData } from "@/lib/validators";
 
-import { useCreateProviderCoverage, useUpdateProviderCoverage } from "@/hooks/useProviderCoverage";
+import {
+  useCreateProviderCoverage,
+  useProviderCoverage,
+  useUpdateProviderCoverage,
+} from "@/hooks/useProviderCoverage";
 
 import { useNeighborhoods } from "@/hooks/useNeighborhoods";
 
@@ -52,7 +56,21 @@ export function ProviderCoverageDialog({
   const createCoverage = useCreateProviderCoverage();
   const updateCoverage = useUpdateProviderCoverage();
 
-  const { isLoading: isLoadingNeighborhoods } = useNeighborhoods();
+  const { data: neighborhoods = [], isLoading: isLoadingNeighborhoods } = useNeighborhoods();
+  const { data: coverages = [], isLoading: isLoadingCoverages } = useProviderCoverage(providerId);
+
+  const registeredNeighborhoodIds = new Set(coverages.map((coverage) => coverage.neighborhood_id));
+
+  const availableNeighborhoods =
+    neighborhoods &&
+    neighborhoods.filter((neighborhood) => {
+      // Na edição, mantém o bairro da cobertura atual disponível
+      if (isEditing && neighborhood.id === coverage?.neighborhood_id) {
+        return true;
+      }
+
+      return !registeredNeighborhoodIds.has(neighborhood.id);
+    });
 
   const {
     register,
@@ -155,12 +173,13 @@ export function ProviderCoverageDialog({
 
             <NeighborhoodCombobox
               value={neighborhoodId}
+              neighborhoods={availableNeighborhoods}
               onValueChange={(value) => {
                 setValue("neighborhood_id", value, {
                   shouldValidate: true,
                 });
               }}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingNeighborhoods || isLoadingCoverages}
             />
 
             {errors.neighborhood_id && (

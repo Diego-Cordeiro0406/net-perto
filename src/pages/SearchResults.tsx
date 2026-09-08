@@ -8,7 +8,7 @@ import type { ProviderGroup } from "@/types/types";
 import { useSingleNeighborhood } from "@/hooks/useNeighborhoods";
 import { SearchResultsSkeleton } from "@/components/skeletons/SearchResultsSkeleton";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getPlanPrice } from "@/lib/utils";
+import { getCoveragePriority, getPlanPrice } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -18,13 +18,17 @@ import {
 } from "@/components/ui/select";
 import { SORT_LABELS } from "@/lib/constants";
 import { trackNoResults, trackSortChange } from "@/lib/analytics";
+import { PaginationComponent } from "@/components/Pagination";
 
 type SortBy = "price" | "download" | "upload";
+const PROVIDERS_PER_PAGE = 4;
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
 
   const [sortBy, setSortBy] = useState<SortBy | null>("price");
+  const [currentPage, setCurrentPage] = useState(1);
+  const resultsRef = useRef<HTMLHeadingElement>(null);
 
   const neighborhoodParam = searchParams.get("neighborhood") ?? "";
   const { data: neighborhood, isPending: isNeighborhoodPending } =
@@ -83,26 +87,42 @@ export default function SearchResults() {
   /**
    * Agrupa os planos por provedor.
    */
-  const providers: ProviderGroup[] = Array.from(
-    sortedPlans.reduce((map, plan) => {
-      if (!plan.provider) {
+  const providers = useMemo(() => {
+    const grouped = Array.from(
+      sortedPlans.reduce((map, plan) => {
+        if (!plan.provider) {
+          return map;
+        }
+
+        const existing = map.get(plan.provider.id);
+
+        if (existing) {
+          existing.plans.push(plan);
+        } else {
+          map.set(plan.provider.id, {
+            provider: plan.provider,
+            plans: [plan],
+            coverageStatus: plan.coverageStatus,
+          });
+        }
+
         return map;
-      }
+      }, new Map<string, ProviderGroup>())
+    ).map(([, value]) => value);
 
-      const existing = map.get(plan.provider.id);
+    return grouped.sort(
+      (a, b) => getCoveragePriority(a.coverageStatus) - getCoveragePriority(b.coverageStatus)
+    );
+  }, [sortedPlans]);
 
-      if (existing) {
-        existing.plans.push(plan);
-      } else {
-        map.set(plan.provider.id, {
-          provider: plan.provider,
-          plans: [plan],
-        });
-      }
+  const totalPages = Math.ceil(providers.length / PROVIDERS_PER_PAGE);
 
-      return map;
-    }, new Map())
-  ).map(([, value]) => value);
+  const paginatedProviders = useMemo(() => {
+    const startIndex = (currentPage - 1) * PROVIDERS_PER_PAGE;
+    const endIndex = startIndex + PROVIDERS_PER_PAGE;
+
+    return providers.slice(startIndex, endIndex);
+  }, [providers, currentPage]);
 
   function handleSortChange(value: SortBy | null) {
     if (!value) {
@@ -110,7 +130,7 @@ export default function SearchResults() {
     }
 
     setSortBy(value);
-
+    setCurrentPage(1);
     trackSortChange(value);
   }
 
@@ -129,7 +149,7 @@ export default function SearchResults() {
             Nova busca
           </Button>
 
-          <div>
+          <div ref={resultsRef}>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               Internet disponível na sua região
             </h1>
@@ -193,7 +213,7 @@ export default function SearchResults() {
 
             {/* ProvednativeButton={false}ores */}
             <div className="space-y-10">
-              {providers.map(({ provider, plans }, index) => (
+              {paginatedProviders.map(({ provider, plans, coverageStatus }, index) => (
                 <div
                   key={provider.id}
                   className="animate-fade-up"
@@ -201,10 +221,26 @@ export default function SearchResults() {
                     animationDelay: `${Math.min(250 + index * 100, 650)}ms`,
                   }}
                 >
-                  <ProviderResultSection provider={provider} plans={plans} />
+                  <ProviderResultSection
+                    provider={provider}
+                    plans={plans}
+                    coverageStatus={coverageStatus}
+                  />
                 </div>
               ))}
             </div>
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+
+                resultsRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            />
           </main>
         )}
 

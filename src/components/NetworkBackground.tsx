@@ -8,13 +8,13 @@ export function NetworkBackground({ theme }: NetworkBackgroundProps) {
     <div
       aria-hidden="true"
       className={`
-        pointer-events-none absolute inset-0 overflow-hidden
-        [mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)]
+        pointer-events-none absolute inset-0 h-full w-full max-w-full overflow-hidden
+        mask-[linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)]
         ${isLight ? "network-background-light" : ""}
       `}
     >
       <svg
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-0 block h-full w-full max-w-full"
         viewBox="0 0 1200 600"
         preserveAspectRatio="xMidYMid slice"
         fill="none"

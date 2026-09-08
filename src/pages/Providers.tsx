@@ -63,6 +63,7 @@ export default function Providers() {
               <TableHead>Nome</TableHead>
               <TableHead>Website</TableHead>
               <TableHead>Descrição</TableHead>
+              <TableHead>Cobertura</TableHead>
               <TableHead className="w-16 text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -96,7 +97,10 @@ export default function Providers() {
                     </a>
                   </TableCell>
 
-                  <TableCell className="max-w-md truncate">{provider.description || "—"}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {provider.description || "Sem descrição"}
+                  </TableCell>
+                  <TableCell className="max-w-md truncate">{provider.coverageCount}</TableCell>
 
                   <TableCell className="text-right">
                     <DropdownMenu>

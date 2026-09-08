@@ -9,7 +9,7 @@ e comparar planos disponíveis em sua região.
 
 ## Funcionalidades
 
-- Busca de provedores por CEP
+- Busca de provedores por Bairro
 - Consulta de disponibilidade por região
 - Comparação de planos de internet
 - Informações sobre velocidades de download e upload
@@ -18,7 +18,7 @@ e comparar planos disponíveis em sua região.
 ## Páginas
 
 - [Página inicial](https://netperto.com.br/)
-- [Busca por CEP](https://netperto.com.br/search)
+- [Busca por Bairro](https://netperto.com.br/search)
 
 ## Área de atendimento
 
