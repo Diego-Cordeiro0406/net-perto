@@ -76,6 +76,8 @@ export function NeighborhoodAutocomplete({
     onValueChange({
       id: neighborhood.id,
       name: neighborhood.name,
+      city: neighborhood.city,
+      slug: neighborhood.slug,
     });
 
     setIsOpen(false);
