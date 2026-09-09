@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpDown } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SORT_LABELS } from "@/lib/constants";
+import { BASE_URL, SORT_LABELS } from "@/lib/constants";
 import { trackNoResults, trackSortChange } from "@/lib/analytics";
 import { PaginationComponent } from "@/components/Pagination";
 import { PageSEO } from "@/components/PageSEO";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 type SortBy = "price" | "download" | "upload";
 const PROVIDERS_PER_PAGE = 4;
@@ -44,6 +52,43 @@ export default function SearchResults() {
     isPending: isPlansPending,
     isError,
   } = usePlansByNeighborhood(neighborhood?.id);
+
+  const pageUrl = `${BASE_URL}/internet/${city}/${neighborhoodSlug}`;
+
+  const jsonLd = neighborhood
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: `Internet no ${neighborhood.name} de ${neighborhood.city} | NetPerto`,
+          description: `Compare provedores e planos de internet disponíveis no bairro ${neighborhood.name}, em ${neighborhood.city}.`,
+          url: pageUrl,
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Início",
+              item: BASE_URL,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: neighborhood.city,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: neighborhood.name,
+              item: pageUrl,
+            },
+          ],
+        },
+      ]
+    : undefined;
 
   const isLoadingResults = isNeighborhoodPending || isPlansPending;
   const hasTrackedNoResults = useRef(false);
@@ -146,13 +191,14 @@ export default function SearchResults() {
           title={`Internet no bairro ${neighborhood.name} de ${neighborhood.city} | NetPerto`}
           description={`Compare provedores e planos de internet disponíveis no bairro ${neighborhood.name}, em ${neighborhood.city}.`}
           canonical={`/internet/${city}/${neighborhoodSlug}`}
+          jsonLd={jsonLd}
         />
       )}
 
       <section className="mx-auto max-w-7xl space-y-8">
         {/* Cabeçalho */}
         <section className="animate-fade-up space-y-4" style={{ animationDelay: "0ms" }}>
-          <Button
+          {/* <Button
             nativeButton={false}
             className="p-0 text-muted-foreground hover:text-primary"
             variant="ghost"
@@ -160,7 +206,25 @@ export default function SearchResults() {
           >
             <ArrowLeft />
             Nova busca
-          </Button>
+          </Button> */}
+
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink render={<Link to="/" />}>Início</BreadcrumbLink>
+              </BreadcrumbItem>
+
+              <BreadcrumbSeparator />
+
+              <BreadcrumbItem>{neighborhood && neighborhood.city}</BreadcrumbItem>
+
+              <BreadcrumbSeparator />
+
+              <BreadcrumbItem>
+                <BreadcrumbPage>{neighborhood && neighborhood.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
           <div ref={resultsRef}>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
