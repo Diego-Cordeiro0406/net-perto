@@ -9,3 +9,5 @@ export const SORT_LABELS = {
   download: "Maior download",
   upload: "Maior upload",
 } as const;
+
+export const BASE_URL = "https://netperto.com.br";

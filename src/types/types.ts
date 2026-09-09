@@ -56,14 +56,17 @@ export type ProviderGroup = {
 
 // PAGESEO TYPES
 
-export interface PageSEOProps {
+type JsonLd = Record<string, unknown>;
+
+export type PageSEOProps = {
   title: string;
   description: string;
   canonical?: string;
   image?: string;
   type?: string;
   noindex?: boolean;
-}
+  jsonLd?: JsonLd | JsonLd[];
+};
 
 // PROVIDERS COVERAGE E NEIGHBORHOODS TYPES
 

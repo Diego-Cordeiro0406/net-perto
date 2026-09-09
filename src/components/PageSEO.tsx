@@ -1,7 +1,7 @@
+import { BASE_URL } from "@/lib/constants";
 import type { PageSEOProps } from "@/types/types";
 import { Helmet } from "react-helmet-async";
 
-const BASE_URL = "https://netperto.com.br";
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
 
 export function PageSEO({
@@ -11,6 +11,7 @@ export function PageSEO({
   image = DEFAULT_IMAGE,
   type = "website",
   noindex = false,
+  jsonLd,
 }: PageSEOProps) {
   const canonicalUrl = canonical
     ? `${BASE_URL}${canonical}`
@@ -20,10 +21,14 @@ export function PageSEO({
 
   const fullTitle = title.includes("NetPerto") ? title : `${title} | NetPerto`;
 
+  const jsonLdItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+
   return (
     <Helmet>
       <title>{fullTitle}</title>
+
       <meta name="description" content={description} />
+
       <link rel="canonical" href={canonicalUrl} />
       <link rel="alternate" hrefLang="pt-BR" href={canonicalUrl} />
 
@@ -44,6 +49,13 @@ export function PageSEO({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+
+      {/* JSON-LD */}
+      {jsonLdItems.map((item, index) => (
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(item)}
+        </script>
+      ))}
     </Helmet>
   );
 }
