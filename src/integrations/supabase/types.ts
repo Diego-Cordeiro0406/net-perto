@@ -30,6 +30,7 @@ export type Database = {
           id: string;
           name: string;
           normalized_name: string;
+          slug: string;
           state: string;
           updated_at: string;
         };
@@ -39,6 +40,7 @@ export type Database = {
           id?: string;
           name: string;
           normalized_name: string;
+          slug: string;
           state?: string;
           updated_at?: string;
         };
@@ -48,6 +50,7 @@ export type Database = {
           id?: string;
           name?: string;
           normalized_name?: string;
+          slug?: string;
           state?: string;
           updated_at?: string;
         };
@@ -211,6 +214,7 @@ export type Database = {
     };
     Functions: {
       is_admin: { Args: never; Returns: boolean };
+      unaccent: { Args: { "": string }; Returns: string };
     };
     Enums: {
       [_ in never]: never;

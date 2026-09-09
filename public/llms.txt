@@ -18,7 +18,6 @@ e comparar planos disponíveis em sua região.
 ## Páginas
 
 - [Página inicial](https://netperto.com.br/)
-- [Busca por Bairro](https://netperto.com.br/search)
 
 ## Área de atendimento
 

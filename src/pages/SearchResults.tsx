@@ -1,11 +1,11 @@
 import { ArrowLeft, ArrowUpDown } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { ProviderResultSection } from "@/components/ProviderResultSection";
 import { usePlansByNeighborhood } from "@/hooks/usePlansByNeighborhood.ts";
 import type { ProviderGroup } from "@/types/types";
-import { useSingleNeighborhood } from "@/hooks/useNeighborhoods";
+import { useNeighborhoodBySlug } from "@/hooks/useNeighborhoods";
 import { SearchResultsSkeleton } from "@/components/skeletons/SearchResultsSkeleton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getCoveragePriority, getPlanPrice } from "@/lib/utils";
@@ -19,20 +19,25 @@ import {
 import { SORT_LABELS } from "@/lib/constants";
 import { trackNoResults, trackSortChange } from "@/lib/analytics";
 import { PaginationComponent } from "@/components/Pagination";
+import { PageSEO } from "@/components/PageSEO";
 
 type SortBy = "price" | "download" | "upload";
 const PROVIDERS_PER_PAGE = 4;
 
 export default function SearchResults() {
-  const [searchParams] = useSearchParams();
-
   const [sortBy, setSortBy] = useState<SortBy | null>("price");
   const [currentPage, setCurrentPage] = useState(1);
   const resultsRef = useRef<HTMLHeadingElement>(null);
 
-  const neighborhoodParam = searchParams.get("neighborhood") ?? "";
-  const { data: neighborhood, isPending: isNeighborhoodPending } =
-    useSingleNeighborhood(neighborhoodParam);
+  const { city, neighborhoodSlug } = useParams<{
+    city: string;
+    neighborhoodSlug: string;
+  }>();
+
+  const { data: neighborhood, isPending: isNeighborhoodPending } = useNeighborhoodBySlug(
+    city,
+    neighborhoodSlug
+  );
 
   const {
     data: plans,
@@ -136,6 +141,14 @@ export default function SearchResults() {
 
   return (
     <main className="container mx-auto px-4 py-8">
+      {neighborhood && (
+        <PageSEO
+          title={`Internet no bairro ${neighborhood.name} de ${neighborhood.city} | NetPerto`}
+          description={`Compare provedores e planos de internet disponíveis no bairro ${neighborhood.name}, em ${neighborhood.city}.`}
+          canonical={`/internet/${city}/${neighborhoodSlug}`}
+        />
+      )}
+
       <section className="mx-auto max-w-7xl space-y-8">
         {/* Cabeçalho */}
         <section className="animate-fade-up space-y-4" style={{ animationDelay: "0ms" }}>

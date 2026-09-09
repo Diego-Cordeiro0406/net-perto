@@ -37,12 +37,13 @@ export default function Index() {
     name: "neighborhoodId",
   });
 
-  const onSubmit = (data: SearchFormData) => {
-    if (selectedNeighborhood) {
-      trackSearch(selectedNeighborhood);
+  const onSubmit = () => {
+    if (!selectedNeighborhood) {
+      return;
     }
+    trackSearch(selectedNeighborhood);
 
-    navigate(`/search?neighborhood=${data.neighborhoodId}`);
+    navigate(`/internet/${selectedNeighborhood.city.toLowerCase()}/${selectedNeighborhood.slug}`);
   };
 
   return (

@@ -70,9 +70,13 @@ export interface PageSEOProps {
 export type SelectedNeighborhood = {
   id: string;
   name: string;
+  slug: string;
+  city: string;
 };
 
 export type Neighborhood = {
   id: string;
   name: string;
+  slug: string;
+  city: string;
 };

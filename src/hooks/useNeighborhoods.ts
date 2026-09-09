@@ -26,7 +26,7 @@ export function useNeighborhoods({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("neighborhoods")
-        .select("id, name")
+        .select("id, name, city, slug")
         .eq("city", city)
         .eq("state", state)
         .order("name");
@@ -61,5 +61,32 @@ export function useSingleNeighborhood(id?: string) {
     },
 
     enabled: Boolean(id),
+  });
+}
+
+export function useNeighborhoodBySlug(city?: string, slug?: string) {
+  return useQuery({
+    queryKey: ["neighborhood", city, slug],
+
+    queryFn: async () => {
+      if (!city || !slug) {
+        return null;
+      }
+
+      const { data, error } = await supabase
+        .from("neighborhoods")
+        .select("id, name, city, state, slug")
+        .eq("city", "Petrolina")
+        .eq("slug", slug)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+
+    enabled: Boolean(city && slug),
   });
 }
