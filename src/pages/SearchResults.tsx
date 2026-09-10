@@ -74,14 +74,14 @@ export default function SearchResults() {
               name: "Início",
               item: BASE_URL,
             },
+            // {
+            //   "@type": "ListItem",
+            //   position: 2,
+            //   name: neighborhood.city,
+            // },
             {
               "@type": "ListItem",
               position: 2,
-              name: neighborhood.city,
-            },
-            {
-              "@type": "ListItem",
-              position: 3,
               name: neighborhood.name,
               item: pageUrl,
             },
@@ -198,16 +198,6 @@ export default function SearchResults() {
       <section className="mx-auto max-w-7xl space-y-8">
         {/* Cabeçalho */}
         <section className="animate-fade-up space-y-4" style={{ animationDelay: "0ms" }}>
-          {/* <Button
-            nativeButton={false}
-            className="p-0 text-muted-foreground hover:text-primary"
-            variant="ghost"
-            render={<Link to="/" />}
-          >
-            <ArrowLeft />
-            Nova busca
-          </Button> */}
-
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -216,9 +206,9 @@ export default function SearchResults() {
 
               <BreadcrumbSeparator />
 
-              <BreadcrumbItem>{neighborhood && neighborhood.city}</BreadcrumbItem>
+              {/* <BreadcrumbItem>{neighborhood && neighborhood.city}</BreadcrumbItem>
 
-              <BreadcrumbSeparator />
+              <BreadcrumbSeparator /> */}
 
               <BreadcrumbItem>
                 <BreadcrumbPage>{neighborhood && neighborhood.name}</BreadcrumbPage>
