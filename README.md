@@ -370,6 +370,7 @@ neighborhoods
 | `id`                | Identificador                        |
 | `name`              | nome do bairro                       |
 | `normalized_name`   | nome do bairro normalizado           |
+| `slug`              | slug do bairro                       |
 | `neighborhood_id`   | Bairro relacionado a cobertura       |
 | `city`              | cidade onde o bairro está localizado |
 | `state`             | estado onde o bairro está localizado |
@@ -423,12 +424,13 @@ Um bairro pode estar associado a diversas coberturas.
                                  │ id                │
                                  │ name              │
                                  │ normalized_name   │
+                                 │ slug              │
                                  │ neighborhood_id   │
                                  │ city              │
                                  │ state             │
                                  └───────────────────┘
 
----
+```
 
 # 📊 Métricas
 
